@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de novedades</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+    /* Estilo base */
+    body {
+        font-family: 'Inter', sans-serif;
+        background: url('logo-flor.png') center center no-repeat;
+        background-size: 400px;
+        background-attachment: fixed;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: auto;
+        padding: 2rem;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Tarjetas con efecto hover */
+    .card {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        margin-top: 1.5rem;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Botones más llamativos */
+    .btn {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+        padding: 0.85rem 1.75rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+        transition: all 0.25s ease;
+    }
+    .btn:hover {
+        transform: translateY(-3px) scale(1.03);
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        box-shadow: 0 6px 15px rgba(37, 99, 235, 0.4);
+    }
+    .btn:active {
+        transform: translateY(0) scale(0.98);
+    }
+
+    /* Resultados con animación sutil */
+    .result-item {
+        background-color: #919ba5;
+        padding: 1rem;
+        border-radius: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-bottom: 0.75rem;
+        border: 1px solid #6181aa;
+    }
+    .result-item:hover {
+        background-color: #1e84c8;
+        border-color: #1a8dbe;
+    }
+
+    /* Modal */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(18, 83, 186, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+    }
+    .modal-content {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 1.25rem;
+        width: 90%;
+        max-width: 550px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        animation: scaleUp 3.0s ease;
+    }
+
+    /* Animaciones */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes scaleUp {
+        from { transform: scale(0.9); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Logo con degradado */
+    .logo-gradient {
+        /* Aplica un degradado sobre el logo usando mezcla de colores */
+        /* Si el logo es PNG con transparencia, esto funciona bien */
+        /* Si es JPG, se recomienda usar PNG para mejor efecto */
+        position: relative;
+        z-index: 1;
+    }
+    .logo-gradient::after {
+        content: "";
+        position: absolute;
+        left: 0; top: 0; right: 0; bottom: 0;
+        z-index: 2;
+        pointer-events: none;
+        border-radius: 1rem;
+        background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 50%, #2563eb 100%);
+        opacity: 0.25;
+        mix-blend-mode: multiply;
+    }
+</style>
+
+</head>
+<body class="bg-gray-100" style="background: url('logo-flor.png') center center no-repeat; background-size: 400px; background-attachment: fixed; opacity: 1;">
+
+    <div class="container">
+        <!-- Logo con degradado -->
+        <img src="logo.png" alt="Logo ABC"
+            class="mb-4 h-20 w-auto mx-auto logo-gradient"
+            style="filter: drop-shadow(0 0 8px #3b82f6);"
+        >
+        <h1 class="text-3xl font-bold mb-6 text-center text-blue-800">Buscador de Novedades</h1>
+        
+        <!-- Vista inicial de botones de zona -->
+        <div id="zone-view" class="w-full">
+            <h2 class="text-xl font-semibold mb-4 text-center">Selecciona una zona:</h2>
+            <div id="zone-buttons" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Botones dinámicos -->
+            </div>
+            
+            <!-- Imagen debajo de los botones -->
+            <div class="mt-8 flex justify-center">
+                <img src="[UNSET].jpg" alt="Imagen descriptiva" class="rounded-xl shadow-lg max-w-full h-auto" style="max-height: 400px;">
+            </div>
+        </div>
+
+        <!-- Vista búsqueda -->
+        <div id="search-view" class="w-full hidden">
+            <button id="back-button" class="mb-4 text-blue-600 font-medium hover:underline flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>Volver a Zonas
+            </button>
+            <div class="card">
+                <div class="relative mb-4 flex items-center justify-center">
+                    <input type="text" id="search-input"
+                        placeholder="Buscar tipo de novedad..."
+                        onkeyup="filterResults()"
+                        class="w-full px-5 py-3 rounded-xl border-2 border-gray-300 bg-gradient-to-r from-blue-100 via-white to-blue-100 focus:outline-none focus:border-blue-500 focus:shadow-lg transition-all duration-300 pl-12 text-lg font-medium shadow-md hover:shadow-xl"
+                        style="transition: box-shadow 0.3s, border-color 0.3s;"
+                    >
+                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                            class="h-7 w-7 text-blue-400 animate-pulse"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <circle cx="11" cy="11" r="8" stroke-width="2" stroke="currentColor" fill="none"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" stroke-width="2" stroke="currentColor"/>
+                        </svg>
+                    </span>
+                </div>
+                <div id="results-list" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+                    <!-- Resultados -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-xl font-bold"></h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <p id="modal-subnovedad" class="text-lg text-gray-700 mb-4"></p>
+            <ul id="pasos-list" class="list-decimal list-inside space-y-2">
+                <!-- Pasos dinámicos -->
+            </ul>
+        </div>
+    </div>
+    <script>
+        
+        // Datos originales con formato incorrecto
+        const rawData = [
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "MECHERO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "ENGAÑO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "COSQUILLEO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "FACTOR OPORTUNIDAD" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "ATRACO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "FLETEO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIO", sub_novedad: "AGRESION CON ARMA BLANCA" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIO", sub_novedad: "AGRESION CON ARMA DE FUEGO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUICIDIO", sub_novedad: "INTENTO DE SUICIDIO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CRISIS EMOCIONALES", sub_novedad: "COMPORTAMIENTOS INUSUALES DE VISITANTES/EMPLEADOS" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIÑA", sub_novedad: "FISICA" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIÑA", sub_novedad: "VERBAL" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES", sub_novedad: "FISICAS" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES", sub_novedad: "GOLPES CON OBJETOS" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES", sub_novedad: "QUEMADURAS" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES", sub_novedad: "CORTES" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES", sub_novedad: "CAIDAS" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES", sub_novedad: "CAUSADAS POR ANIMALES" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "DAÑO EN BIEN AJENO", sub_novedad: "VANDALISMO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "DAÑO EN BIEN AJENO", sub_novedad: "DAÑO EN BIENES E INMUEBLES" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "DAÑO EN BIEN AJENO", sub_novedad: "GRAFITI" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad: "SUPLANTACION DE IDENTIDAD" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad: "USO DE DOCUMENTACION FALSA" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad: "ACCESO NO AUTORIZADO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSCENOS", sub_novedad: "EXHIBICIONISMO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSCENOS", sub_novedad: "ACOSO SEXUAL" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSCENOS", sub_novedad: "RELACIONES SEXUALES" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONSUMO DE SUSTANCIAS PSICOACTIVAS", sub_novedad: "ALCOHOL" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONSUMO DE SUSTANCIAS PSICOACTIVAS", sub_novedad: "DROGAS Y/O SUSTANCIAS ALUCINOGENAS" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONSUMO DE SUSTANCIAS PSICOACTIVAS", sub_novedad: "CIGARRILLOS O VAPORIZADORES" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "AMPAROS POLICIVOS", sub_novedad: "ORDENES DE RESTRICCION" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "AMPAROS POLICIVOS", sub_novedad: "CONFLICTOS LEGALES O ADMINISTRATIVOS" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "AMPAROS POLICIVOS", sub_novedad: "DISPUTAS PERSONALES AL INTERIOR DE LAS MARCAS" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES EN MARCAS", sub_novedad: "CAIDAS DE ALTURA" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES EN MARCAS", sub_novedad: "ELECTROCUCION" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES EN MARCAS", sub_novedad: "ATRAPAMIENTO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES EN MARCAS", sub_novedad: "GOLPES O CAIDAS DE OBJETOS" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES EN MARCAS", sub_novedad: "QUEMADURAS" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES EN MARCAS", sub_novedad: "LESIONES CON UTENSILIOS CORTOPUNZANTES" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXTORCION", sub_novedad: "EXIGENCIA DE DINERO O INFORMACION" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTRUSION", sub_novedad: "INGRESO NO AUTORIZADO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTRUSION", sub_novedad: "INGRESO FORZOSO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "PAQUETE SOSPECHOSO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "AMENAZA DE BOMBA" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "MATERIAL EXPLOSIVO" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "PISOS MOJADOS" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "FALTA DE ILUMINACION" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "OBSTACULOS EN RUTAS DE EVACUACION" },
+  { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "INFRAESTRUCTURA CON RIESGO DE CAIDA" },
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN LA RED ELECTRICA EN EL LOCAL", sub_novedad: "DAÑO DE EQUIPOS ELECTRICOS POR MICROCORTE" },
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN LA RED ELECTRICA EN EL LOCAL", sub_novedad: "SOBRECALENTAMIENTO DE CABLES" },
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "CORTE DE ENERGIA POR EL OPERADOR DE RED", sub_novedad: "FALLO EN SUMINISTRO PRINCIPAL" },
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "CORTE DE ENERGIA POR EL OPERADOR DE RED", sub_novedad: "MANTENIMIENTO NO PROGRAMADO" },
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "CORTE DE ENERGIA POR EL OPERADOR DE RED", sub_novedad: "MANTENIMIENTO PROGRAMADO POR EL OPERADOR" },
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "RUPTURA O FALLA EN TUBERIAS", sub_novedad: "TUBERIAS DE AGUAS LLUVIAS, SANITARIAS" },
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "RUPTURA O FALLA EN TUBERIAS", sub_novedad: "RED DE AGUA POTABLE LOCALES" },
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "RUPTURA O FALLA EN TUBERIAS", sub_novedad: "RED CONTRA INCENDIOS" },
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "FUGA DE GAS", sub_novedad: "FUGA DE GAS DENTRO DE LA MARCA" },
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "FUGA DE GAS", sub_novedad: "FUGA DE GAS EN NICHO DE MEDIDORES" },
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "INCENDIO", sub_novedad: "FUEGO INCIPIENTE" },
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area:" HIDRÁULICO", tipo_novedad:" INCENDIO",sub_novedad:" FUEGO DECLARADO"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRÁULICO", tipo_novedad: "CORTE DE AGUA POR LA EMPRESA DE ACUEDUCTO", sub_novedad:"VÁLVULAS PRINCIPALES CERRADAS"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRÁULICO", tipo_novedad: "CORTE DE AGUA POR LA EMPRESA DE ACUEDUCTO", sub_novedad:"FALTA DE PRESIÓN"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRÁULICO", tipo_novedad: "CORTE DE GAS POR COMERCIALIZADOR DE GAS", sub_novedad:"CORTE DE AGUA POR NO PAGO DE SERVICIO"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRÁULICO", tipo_novedad: "CORTE DE GAS POR COMERCIALIZADOR DE GAS", sub_novedad:"CORTE DE AGUA POR DAÑO EN LA RED PRINCIPAL"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRÁULICO", tipo_novedad: "TAPONAMIENTO DE TUBERÍAS SANITARIAS", sub_novedad:"TAPONAMIENTO CON AFECTACIÓN A UNA SOLA MARCA"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRÁULICO", tipo_novedad: "TAPONAMIENTO DE TUBERÍAS SANITARIAS", sub_novedad:"TAPONAMIENTO CON AFECTACIÓN A MÚLTIPLE MARCA"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "FILTRACIONES POR PLACA", sub_novedad:"FILTRACIÓN DE PLACA CON AFECTACIÓN EN INFRAESTRUCTURA Y EQUIPOS"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "FILTRACIONES POR PLACA", sub_novedad:"FILTRACIÓN DE PLACA SIN AFECTACIÓN DE INFRAESTRUCTURA Y EQUIPOS"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGO DE CAÍDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad:"RIESGO DE CAÍDA POR FALLAS ESTRUCTURALES"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGO DE CAÍDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad:"DESNIVELES SIN SEÑALIZACIÓN"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGO DE CAÍDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad:"RIESGO DE CAÍDAS POR FALLAS NO ESTRUCTURALES"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "FALLA EN REJAS Y PUERTAS DE INGRESO A LA MARCA", sub_novedad:"CERRADURAS DEFECTUOSAS"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "FALLA EN REJAS Y PUERTAS DE INGRESO A LA MARCA", sub_novedad:"DEFORMACIÓN POR USO"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "FALLA EN REJAS Y PUERTAS DE INGRESO A LA MARCA", sub_novedad:"REJAS SIN ENERGÍA O BLOQUEADAS"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECÁNICO", tipo_novedad: "RUPTURA DE TUBERÍAS DE AIRE ACONDICIONADO", sub_novedad:"RUPTURA DE TUBERÍA AGUA ARRIBA DE LA VÁLVULA PRINCIPAL DEL LOCAL"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECÁNICO", tipo_novedad: "RUPTURA DE TUBERÍAS DE AIRE ACONDICIONADO", sub_novedad:"RUPTURA DE TUBERÍA AGUA ABAJO DE LA VÁLVULA PRINCIPAL DEL LOCAL"},
+  { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECÁNICO", tipo_novedad: "FALLA EN SUMINISTRO DE AGUA EN TORRE DE ENFRIAMIENTO", sub_novedad:"OBSTRUCCIÓN EN TUBERÍA O DAÑO DE VÁLVULAS"},
+  { zona: "MARCA", direccion: "IIT", sub_area: "AUTOMATIZACIÓN", tipo_novedad: "ALARMA PANEL INCENDIO", sub_novedad:""},
+  { zona: "MARCA", direccion: "IIT", sub_area: "AUTOMATIZACIÓN", tipo_novedad: "AUTORIZACIÓN DE INGRESO AL ESTACIONAMIENTO", sub_novedad:""},
+  { zona: "MARCA", direccion: "IIT", sub_area: "TECNOLOGÍA", tipo_novedad: "COMUNICACIONES", sub_novedad:""},
+  { zona: "MARCA", direccion: "IIT", sub_area: "TECNOLOGÍA", tipo_novedad: "AUTORIZACIONES PLATAFORMAS MANTUM", sub_novedad:""},
+  { zona: "MARCA", direccion: "IIT", sub_area: "INFORMÁTICA", tipo_novedad: "INGRESO A LA PLATAFORMA DE MANTUM", sub_novedad:""},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad:"MECHERO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad:"ENGAÑO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad:"COSQUILLEO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad:"FACTOR OPORTUNIDAD"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad:"ATRACO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad:"FLETEO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad:"CREDENCIALES FALSAS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad:"SUPLANTACIÓN DE VISITANTES"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad:"SUPLANTACIÓN DE FUNCIONARIOS PÚBLICOS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIÑA", sub_novedad:"PELEA FÍSICA"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIÑA", sub_novedad:"ALTERCADO VERBAL"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSCENOS", sub_novedad:"ACOSO SEXUAL"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSCENOS", sub_novedad:"EXHIBICIONISMO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSCENOS", sub_novedad:"COMPORTAMIENTO INAPROPIADO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "MASCOTAS", sub_novedad:"ANIMALES SUELTOS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "MASCOTAS", sub_novedad:"AGRESIONES A MASCOTAS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "MASCOTAS", sub_novedad:"DAÑOS CAUSADOS POR MASCOTAS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "MASCOTAS", sub_novedad:"ACCIDENTES CON MASCOTAS (LESION O MUERTE)"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIESGOS DE CAIDAS", sub_novedad:"PISOS RESBALOSOS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIESGOS DE CAIDAS", sub_novedad:"ESCALERAS SIN MANTENIMIENTO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIESGOS DE CAIDAS", sub_novedad:"DESNIVELES PELIGROSOS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "NO PAGO DE TARIFAS", sub_novedad:"EVASIÓN DE PAGO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "NO PAGO DE TARIFAS", sub_novedad:"NOVEDADES EN PUNTOS DE PAGO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "NO PAGO DE TARIFAS", sub_novedad:"FALLAS EN SISTEMA DE COBRO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIOS", sub_novedad:"AGRESIÓN CON ARMA BLANCA"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIOS", sub_novedad:"AGRESIÓN CON ARMA DE FUEGO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIOS", sub_novedad:"VIOLENCIA EXTREMA"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONSUMO DE SUSTANCIAS PSICOACTIVAS", sub_novedad:"ALCOHOL"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONSUMO DE SUSTANCIAS PSICOACTIVAS (BAÑO)", sub_novedad:"DROGAS Y/O SUSTANCIAS ALUCINÓGENAS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONSUMO DE SUSTANCIAS PSICOACTIVAS", sub_novedad:"CIGARRILLOS O VAPEADORES"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTOXICACION", sub_novedad:"INTOXICACIÓN ALIMENTARIA"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTOXICACION", sub_novedad:"EXPOSICIÓN A QUÍMICOS (resolución 773)"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTOXICACION", sub_novedad:"CONSUMO DE SUSTANCIAS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSCENOS", sub_novedad:"EXHIBICIONISMO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSCENOS", sub_novedad:"ACOSO SEXUAL"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSCENOS", sub_novedad:"RELACIONES SEXUALES"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXTORSION", sub_novedad:"EXIGENCIA DE DINERO O INFORMACIÓN"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad:"MENORES EXTRAVIADOS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad:"ADULTOS DESORIENTADOS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad:"PERSONAS DESAPARECIDAS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "DAÑO EN BIEN AJENO", sub_novedad:"VANDALISMO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "DAÑO EN BIEN AJENO", sub_novedad:"DAÑO EN BIENES E INMUEBLES" },
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "DAÑO EN BIEN AJENO", sub_novedad:"GRAFITI"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUICIDIO", sub_novedad:"INTENTO DE SUICIDIO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CRISIS EMOCIONALES", sub_novedad:"COMPORTAMIENTOS INUSUALES DE VISITANTES"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTRUSION", sub_novedad:"INGRESO NO AUTORIZADO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTRUSION", sub_novedad:"INGRESO FORZOSO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad:"PAQUETE SOSPECHOSO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad:"AMENAZA DE BOMBA"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad:"MATERIAL EXPLOSIVO"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad:"FALTA DE SEÑALIZACIÓN"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad:"EQUIPOS DAÑADOS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad:"RIESGOS ELÉCTRICOS"},
+  { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad:"INFRAESTRUCTURA CON RIESGO DE CAIDA"},
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA EN SUMINISTRO DE AGUA EN TORRE DE ENFRIAMIENTO", sub_novedad:"DAÑO EN BOMBA O VENTILADOR DE LA TORRE" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA EN ILUMINACION MALL", sub_novedad:"INTERRUPCION O DAÑO EN LUCES DE LOS PASILLOS Y MALL" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA EN ILUMINACION MALL", sub_novedad:"FALLA EN CONTROL DE ILUMINACION" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA ELECTRICA EN PUNTOS FIJOS", sub_novedad:"FALLA EN TABLERO ELECTRICO EN SERVICIOS GENERALES" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA ELECTRICA EN PUNTOS FIJOS", sub_novedad:"FALLA EN TABLERO DE FUERZA" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA ELECTRICA EN BAJA TENSION", sub_novedad:"FALLA ELECTRICA EN CIRCUITOS NO REGULADOS" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA ELECTRICA EN BAJA TENSION", sub_novedad:"FALLO EN SUMINISTRO PRINCIPAL" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA ELECTRICA EN BAJA TENSION", sub_novedad:"MANTENIMIENTO NO PROGRAMADO" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA ELECTRICA EN BAJA TENSION", sub_novedad:"MANTENIMIENTO PROGRAMADO POR EL OPERADOR" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA EN UPS DE CENTRAL OPERACIONES Y DATACENTER", sub_novedad:"FALLA ELECTRICA DE UPS CENTRAL DE OPERACIONES" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA EN UPS DE CENTRAL OPERACIONES Y DATACENTER", sub_novedad:"FALLA ELECTRICA EN CENTRAL DE ESTACIONAMIENTO" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA ELECTRICA EN SUMINISTRO DE ENERGIA A STANDS", sub_novedad:"FALLA ELECTRICA EN UN SOLO STAND" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA ELECTRICA EN SUMINISTRO DE ENERGIA A STANDS", sub_novedad:"FALLA ELECTRICA EN VARIOS STANDS" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"CABLES ELECTRICOS EXPUESTOS", sub_novedad:"CABLES ELECTRICOS EXPUESTOS EN CAJAS DE PISO" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"RUPTURA O FALLA EN TUBERIAS (TUBERIAS DE AGUAS LLUVIAS, SANITARIAS, POTABLES Y RED CONTRAINCENDIOS)", sub_novedad:"TUBERIAS DE AGUAS LLUVIAS, SANITARIAS" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"RUPTURA O FALLA EN TUBERIAS (TUBERIAS DE AGUAS LLUVIAS, SANITARIAS, POTABLES Y RED CONTRAINCENDIOS)", sub_novedad:"RED DE AGUA POTABLE ZONA COMUN" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"RUPTURA O FALLA EN TUBERIAS (TUBERIAS DE AGUAS LLUVIAS, SANITARIAS, POTABLES Y RED CONTRAINCENDIOS)", sub_novedad:"RED CONTRAINCENDIOS" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"FUGA DE GAS EN ZONA COMUN", sub_novedad:"FUGA DE GAS DENTRO DEL MALL" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"FUGA DE GAS EN ZONA COMUN", sub_novedad:"FUGA DE GAS EN CUBIERTA" },
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN SUMINISTRO DE AGUA EN TORRE DE ENFRIAMIENTO", sub_novedad:"DAÑO EN BOMBA O VENTILADOR DE LA TORRE"},
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN ILUMINACION MALL", sub_novedad:"INTERMITENCIA O DAÑO EN LUCES DE LOS PASILLOS Y MALL"},
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN ILUMINACION MALL", sub_novedad:"FALLA EN CONTROL DE ILUMINACION"},
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN PUNTOS FIJOS", sub_novedad:"FALLA EN TABLERO ELECTRICO EN SERVICIOS GENERALES"},
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN PUNTOS FIJOS", sub_novedad:"FALLA EN TABLERO DE FUERZA"},
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN BAJA TENSION", sub_novedad:"FALLA ELECTRICA EN CIRCUITOS NO REGULADOS"},
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN BAJA TENSION", sub_novedad:"FALLO EN SUMINISTRO PRINCIPAL"},
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN BAJA TENSION", sub_novedad:"MANTENIMIENTO NO PROGRAMADO"},
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN BAJA TENSION", sub_novedad:"MANTENIMIENTO PROGRAMADO POR EL OPERADOR"},
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN UPS DE CENTRAL OPERACIONES Y DATACENTER", sub_novedad:"FALLA ELECTRICA DE UPS CENTRAL DE OPERACIONES"},
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN UPS DE CENTRAL OPERACIONES Y DATACENTER", sub_novedad:"FALLA ELECTRICA EN CENTRAL DE ESTACIONAMIENTO"},
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN SUMINISTRO DE ENERGIA A STANDS", sub_novedad:"FALLA ELECTRICA EN UN SOLO STAND"},
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN SUMINISTRO DE ENERGIA A STANDS", sub_novedad:"FALLA ELECTRICA EN VARIOS STANDS"},
+  { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "CABLES ELECTRICOS EXPUESTOS", sub_novedad:"CABLES ELECTRICOS EXPUESTOS EN CAJAS DE PISO"},
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"RUPTURA O FALLA EN TUBERIAS (TUBERIAS DE AGUAS LLUVIAS, SANITARIAS, POTABLES Y RED CONTRAINCENDIOS)", sub_novedad:"TUBERIAS DE AGUAS LLUVIAS, SANITARIAS" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"RUPTURA O FALLA EN TUBERIAS (TUBERIAS DE AGUAS LLUVIAS, SANITARIAS, POTABLES Y RED CONTRAINCENDIOS)", sub_novedad:"RED DE AGUA POTABLE ZONA COMUN" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"RUPTURA O FALLA EN TUBERIAS (TUBERIAS DE AGUAS LLUVIAS, SANITARIAS, POTABLES Y RED CONTRAINCENDIOS)", sub_novedad:"RED CONTRAINCENDIOS" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"FUGA DE GAS EN ZONA COMUN", sub_novedad:"FUGA DE GAS DENTRO DEL MALL" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"FUGA DE GAS EN ZONA COMUN", sub_novedad:"FUGA DE GAS EN CUBIERTA" }, 
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad:"RIESGO DE CAIDA POR FALLAS ESTRUCTURALES" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad:"RIESGO DE CAIDAS POR FALLAS NO ESTRUCTURALES" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad:"RIESGO DE CAIDA POR FALLAS NO ESTRUCTURALES" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"DAÑO DE INFRAESTRUCTURA POR VISITANTES Y/O PROVEEDORES", sub_novedad:"DAÑOS LOCATIVOS CAUSADOS POR PROVEEDORES Y/O VISITANTES" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"DAÑO DE INFRAESTRUCTURA POR VISITANTES Y/O PROVEEDORES", sub_novedad:"DAÑOS EN EQUIPOS CAUSADOS POR VISITANTES Y/O PROVEEDORES" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTROMECANICO", tipo_novedad:"ATRAPAMIENTO DE PERSONAS EN ASCENSORES", sub_novedad:"ATRAPAMIENTO DE PERSONAS EN ASCENSOR DE CARGA" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTROMECANICO", tipo_novedad:"ATRAPAMIENTO DE PERSONAS EN ASCENSORES", sub_novedad:"ATRAPAMIENTO DE PERSONAS EN ASCENSOR PANORAMICO" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTROMECANICO", tipo_novedad:"ATRAPAMIENTO DE ELEMENTOS EN ESCALERAS", sub_novedad:"ATRAPAMIENTO DE PRENDAS DE VESTIR" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTROMECANICO", tipo_novedad:"ATRAPAMIENTO DE ELEMENTOS EN ESCALERAS", sub_novedad:"ATRAPAMIENTO DE ACCESORIOS, PAQUETES Y OTROS ELEMENTOS" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTROMECANICO", tipo_novedad:"FALLA DE EXTRACTORES EN BAÑOS", sub_novedad:"FALLA DE EXTRACTORES EN BAÑOS" },
+  { zona:"ZONA COMUN", direccion:"MANTENIMIENTO", sub_area:"ELECTROMECANICO", tipo_novedad:"BLOQUEO DE PUERTAS AUTOMATICAS Y REJAS", sub_novedad:"BLOQUEO DE PUERTAS AUTOMATICAS" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"AUTOMATIZACION", tipo_novedad:"RGB", sub_novedad:"FALLA EN ILUMINACION RGB, SECTORES CON COLORES DISTORSIONADOS" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"AUTOMATIZACION", tipo_novedad:"SISTEMA DE CCTV", sub_novedad:"CAMARAS INOPERATIVAS" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"AUTOMATIZACION", tipo_novedad:"PUNTOS DE PAGO", sub_novedad:"TOTEMS DE PAGO NO RECONOCEN TARJETAS" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"AUTOMATIZACION", tipo_novedad:"DETECCION DE INCENDIO", sub_novedad:"SENSORES DISPARAN FALSAS ALARMAS" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"AUTOMATIZACION", tipo_novedad:"DATACENTER", sub_novedad:"DATACENTER" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"AUTOMATIZACION", tipo_novedad:"SONIDO", sub_novedad:"ALTAVOCES DAÑADOS" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"AUTOMATIZACION", tipo_novedad:"TOTEMS \"ENCUENTRA A TU VEHICULO\"", sub_novedad:"PANTALLA TACTIL NO RESPONDE" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"AUTOMATIZACION", tipo_novedad:"VALIDADORAS DE ESTACIONAMIENTO", sub_novedad:"VALIDADORAS DE ESTACIONAMIENTO" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"AUTOMATIZACION", tipo_novedad:"PUERTAS DE EMERGENCIAS", sub_novedad:"NO SE DESBLOQUEA AUTOMATICAMENTE" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"AUTOMATIZACION", tipo_novedad:"CONTROL DE ACCESO", sub_novedad:"NO LEE LA HUELLA CORRECTAMENTE" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"TECNOLOGIA", tipo_novedad:"COMUNICACION TELEFONICA", sub_novedad:"COMUNICACION TELEFONICA" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"TECNOLOGIA", tipo_novedad:"INTERNET", sub_novedad:"INTERNET" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"TECNOLOGIA", tipo_novedad:"PANTALLAS", sub_novedad:"PANTALLAS" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"TECNOLOGIA", tipo_novedad:"SWITCHES DE RED", sub_novedad:"SOBRECALENTADO" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"TECNOLOGIA", tipo_novedad:"SWITCHES DE RED", sub_novedad:"VENTILADORES OBSTRUIDOS" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"TECNOLOGIA", tipo_novedad:"EQUIPOS DE COMPUTO", sub_novedad:"EQUIPOS DE COMPUTO" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"TECNOLOGIA", tipo_novedad:"DATACENTER", sub_novedad:"TEMPERATURA CRITICA EN RACK SERVIDORES" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"TECNOLOGIA", tipo_novedad:"AUTORIZACIONES PLATAFORMA MANTUM", sub_novedad:"AUTORIZACIONES PLATAFORMA MANTUM" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"INFORMATICA", tipo_novedad:"PLATAFORMA MANTUM", sub_novedad:"CAIDA DEL APLICATIVO" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"INFORMATICA", tipo_novedad:"PLATAFORMA ADCI", sub_novedad:"ERROR DEL SERVIDOR" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"INFORMATICA", tipo_novedad:"LA INTRANET", sub_novedad:"LA INTRANET" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"INFORMATICA", tipo_novedad:"LICENCIAS DE CORREO", sub_novedad:"LICENCIAS EXPIRADAS" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"INFORMATICA", tipo_novedad:"LICENCIAS DE CORREO", sub_novedad:"FALTA DE LICENCIAS" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"INFORMATICA", tipo_novedad:"SERVIDORES EN LA NUBE", sub_novedad:"ALMACENAMIENTO LLENO" },
+  { zona:"ZONA COMUN", direccion:"IIT", sub_area:"INFORMATICA", tipo_novedad:"ANTIVIRUS", sub_novedad:"ACTUALIZACION FALLIDA EN ESTACIONES DE TRABAJO" },
+  { zona:"ZONA COMUN", direccion:"PROYECTOS", sub_area:"AMBIENTAL", tipo_novedad:"CONTENEDORES DE RECICLAJE INSUFICIENTES O MAL", sub_novedad:"CONTENEDORES DE RECICLAJE INSUFICIENTES O MAL" },
+  { zona:"ZONA COMUN", direccion:"PROYECTOS", sub_area:"AMBIENTAL", tipo_novedad:"ACUMULACION DE RESIDUOS EN AREAS DE DESCANSO", sub_novedad:"ACUMULACION DE RESIDUOS EN AREAS DE DESCANSO" },
+  { zona:"ZONA COMUN", direccion:"PROYECTOS", sub_area:"AMBIENTAL", tipo_novedad:"MALOS OLORES POR FALTA DE LIMPIEZA EN BAÑOS Y AREAS DE COMIDA", sub_novedad:"MALOS OLORES POR FALTA DE LIMPIEZA EN BAÑOS Y AREAS DE COMIDA" },
+  { zona:"ZONA COMUN", direccion:"PROYECTOS", sub_area:"AMBIENTAL", tipo_novedad:"USO EXCESIVO DE PRODUCTOS QUIMICOS", sub_novedad:"USO EXCESIVO DE PRODUCTOS QUIMICOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"HURTO", sub_novedad:"ROBO DE AUTOPARTES" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"HURTO", sub_novedad:"HURTO DE OBJETOS DENTRO DEL VEHICULO" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"HURTO", sub_novedad:"HURTO DE VEHICULO" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACCIDENTE DE TRANSITO", sub_novedad:"COLISION ENTRE VEHICULOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACCIDENTE DE TRANSITO", sub_novedad:"ATROPELLO" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACCIDENTE DE TRANSITO", sub_novedad:"CHOQUE CONTRA ESTRUCTURAS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"CONGESTION VEHICULAR", sub_novedad:"BLOQUEOS POR VEHICULOS MAL ESTACIONADOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"CONGESTION VEHICULAR", sub_novedad:"ALTA AFLUENCIA" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"CONGESTION VEHICULAR", sub_novedad:"DAÑO SISTEMA DE TALAQUERAS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"CONGESTION VEHICULAR", sub_novedad:"VIAS ALTERNAS AL CENTRO COMERCIAL" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"SUPLANTACION", sub_novedad:"USO DE TICKETS FALSOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"SUPLANTACION", sub_novedad:"SUPLANTACION EN ACCESOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"SUPLANTACION", sub_novedad:"FRAUDE EN PAGOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"RIÑA", sub_novedad:"PELEA ENTRE CONDUCTORES" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"RIÑA", sub_novedad:"DISCUSION POR ESTACIONAMIENTO" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"RIÑA", sub_novedad:"AGRESION VERBAL" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACTOS OBSCENOS", sub_novedad:"EXHIBICIONISMO" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACTOS OBSCENOS", sub_novedad:"ACOSO EN VEHICULOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACTOS OBSCENOS", sub_novedad:"ACTOS SEXUALES" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"MASCOTAS", sub_novedad:"ANIMALES ABANDONADOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"MASCOTAS", sub_novedad:"MASCOTAS ENCERRADAS EN VEHICULOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"RIESGOS DE CAIDAS", sub_novedad:"PISOS RESBALOSOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"RIESGOS DE CAIDAS", sub_novedad:"HUECOS EN PAVIMENTOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"RIESGOS DE CAIDAS", sub_novedad:"ILUMINACION DEFICIENTE" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"RIESGOS DE CAIDAS", sub_novedad:"CAIDAS DE OBJETOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"NO PAGO DE TARIFAS", sub_novedad:"EVASION DE PAGO" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"NO PAGO DE TARIFAS", sub_novedad:"CONFLICTOS EN CAJA" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"NO PAGO DE TARIFAS", sub_novedad:"FALLAS EN SISTEMAS DE COBRO" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACCIDENTES LABORALES", sub_novedad:"CAIDAS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACCIDENTES LABORALES", sub_novedad:"ELECTROCUCION" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACCIDENTES LABORALES", sub_novedad:"ATRAPAMIENTO" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACCIDENTES LABORALES", sub_novedad:"GOLPES O CAIDAS DE OBJETOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACCIDENTES LABORALES", sub_novedad:"QUEMADURAS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"HOMICIDIOS", sub_novedad:"AGRESION CON ARMA BLANCA" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"HOMICIDIOS", sub_novedad:"AGRESION CON ARMA DE FUEGO" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"HOMICIDIOS", sub_novedad:"VIOLENCIA EXTREMA" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"SUSTANCIAS PSICOACTIVAS", sub_novedad:"DROGAS EN VEHICULOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"INTOXICACION", sub_novedad:"INTOXICACION POR MONOXIDO" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"INTOXICACION", sub_novedad:"EXPOSICION A QUIMICOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"INTOXICACION", sub_novedad:"CONSUMO DE SUSTANCIAS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACOSO", sub_novedad:"ACOSO SEXUAL" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACOSO", sub_novedad:"ACOSO LABORAL" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACOSO", sub_novedad:"ACOSO PSICOLOGICO" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"EXTORCION", sub_novedad:"AMENAZAS A USUARIOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"EXTORCION", sub_novedad:"COBRO ILEGAL POR ESTACIONAMIENTO" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"LESIONES PRODUCIDAS POR MASCOTAS", sub_novedad:"MORDEDURAS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"LESIONES PRODUCIDAS POR MASCOTAS", sub_novedad:"ARAÑAZOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad:"MENORES EXTRAVIADOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad:"ADULTOS DESORIENTADOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad:"PERSONAS DESAPARECIDAS" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"SUICIDIO", sub_novedad:"INTENTO DE SUICIDIO" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"CRISIS EMOCIONALES", sub_novedad:"COMPORTAMIENTOS INUSUALES DE VISITANTES" },
+  { zona:"ESTACIONAMIENTO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"INTRUSION", sub_novedad:"INGRESO NO AUTORIZADO" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"CABLES ELECTRICOS EXPUESTOS", sub_novedad:"CABLES ELECTRICOS EXPUESTOS EN TECHOS DE SOTANOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"CABLES ELECTRICOS EXPUESTOS", sub_novedad:"CABLES ELECTRICOS EXPUESTOS EN PISOS DE SOTANOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"RUPTURA O FALLA EN TUBERIAS (TUBERIAS DE AGUAS LLUVIAS, SANITARIAS, POTABLES Y RED CONTRA INCENDIOS)", sub_novedad:"RUPTURA O FALLA EN TUBERIA DE AGUA LLUVIAS O SANITARIAS" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"RUPTURA O FALLA EN TUBERIAS", sub_novedad:"RUPTURA EN TUBERIAS DE AGUA POTABLES" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"RUPTURA O FALLA EN TUBERIAS", sub_novedad:"RUPTURA EN TUBERIAS DE RED CONTRA INCENDIO" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"TAPONAMIENTO DE TUBERIAS", sub_novedad:"TAPONAMIENTO DE TUBERIAS DE AGUAS GRASAS Y NEGRAS" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"FALLA EN EQUIPOS DE PRESION DE SUMINISTRO DE AGUA POTABLES", sub_novedad:"FALLA EN EQUIPOS DE PRESION DE SUMINISTRO DE AGUA POTABLES" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"AUSENCIA DE SUMINISTRO DE AGUA A LOS TANQUES DE ALMACENAMIENTO", sub_novedad:"AUSENCIA DE SUMINISTRO DE AGUA A LOS TANQUES DE ALMACENAMIENTO" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"INCENDIO", sub_novedad:"FUEGO INCIPIENTE" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"INCENDIO", sub_novedad:"FUEGO DECLARADO" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"COLAPSO DE POZOS Eyectores", sub_novedad:"FALLA EN EQUIPO DE BOMBEO DE POZOS Eyectores DE SISTEMA ELECTRICO Y/O MECANICO" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"FUGA DE GAS", sub_novedad:"FUGA DE GAS EN TUBERIAS PRINCIPALES DE SOTANO" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad:"RIESGO DE CAIDA POR FALLAS ESTRUCTURALES" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS", sub_novedad:"RIESGO DE CAIDA POR FALLAS NO ESTRUCTURALES" },
+  { zona:"ESTACIONAMIENTO", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"FILTRACIONES DE AGUA POR PANTALLAS", sub_novedad:"FILTRACIONES DE AGUA POR PANTALLAS" },
+  { zona:"ESTACIONAMIENTO", direccion:"PROYECTOS", sub_area:"AMBIENTAL", tipo_novedad:"DERRAMES DE ACEITES O COMBUSTIBLES", sub_novedad:"CONTAMINACION DEL SUELO" },
+  { zona:"ESTACIONAMIENTO", direccion:"PROYECTOS", sub_area:"AMBIENTAL", tipo_novedad:"ESPACIOS MAL VENTILADOS", sub_novedad:"ACUMULACION DE GASES CONTAMINANTES" },
+  { zona:"ESTACIONAMIENTO", direccion:"PROYECTOS", sub_area:"AMBIENTAL", tipo_novedad:"CONTAMINACION POR EMISIONES Y DERRAMES", sub_novedad:"EMISIONES DE VEHICULOS Y DERRAMES DE LIQUIDOS" },
+  { zona:"ESTACIONAMIENTO", direccion:"PROYECTOS", sub_area:"AMBIENTAL", tipo_novedad:"ACUMULACION DE RESIDUOS", sub_novedad:"CENTRO DE ACOPIO ESTACIONAMIENTO" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"HURTO", sub_novedad:"ATRACO A TRANSEUNTES" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"HURTO", sub_novedad:"HURTO DE VEHICULOS" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"HURTO", sub_novedad:"HURTO DE ELEMENTOS PERTENECIENTES AL CENTRO COMERCIAL" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"CONGESTION VEHICULAR", sub_novedad:"BLOQUEO POR VEHICULOS MAL ESTACIONADOS" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"CONGESTION VEHICULAR", sub_novedad:"CONGESTION EN VIAS ALTERNAS" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"CONGESTION VEHICULAR", sub_novedad:"ALTA AFLUENCIA" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"RIÑA", sub_novedad:"PELEA ENTRE PERSONAS" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACTOS OBSCENOS", sub_novedad:"EXHIBICIONISMO" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACTOS OBSCENOS", sub_novedad:"ACOSO SEXUAL" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"ACTOS OBSCENOS", sub_novedad:"COMPORTAMIENTO INAPROPIADO" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"MASCOTAS", sub_novedad:"MALTRATO A ANIMALES" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"RIESGOS DE CAIDAS", sub_novedad:"PAVIMENTO EN MAL ESTADO" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"RIESGOS DE CAIDAS", sub_novedad:"DESNIVELES PELIGROSOS" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"RIESGOS DE CAIDAS", sub_novedad:"OBSTACULOS EN VIAS" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"HOMICIDIOS", sub_novedad:"AGRESION CON ARMA" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"HOMICIDIOS", sub_novedad:"VIOLENCIA EXTREMA" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"CONSUMO DE SUSTANCIAS", sub_novedad:"DROGAS EN AREAS PUBLICAS" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"INTOXICACION", sub_novedad:"CONSUMO DE SUSTANCIAS" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad:"MENORES EXTRAVIADOS" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad:"ADULTOS DESORIENTADOS" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad:"PERSONAS DESAPARECIDAS" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"CRISIS EMOCIONAL", sub_novedad:"CRISIS EMOCIONAL" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"INTRUSION", sub_novedad:"INGRESO NO AUTORIZADO" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"INTRUSION", sub_novedad:"VIOLACION DE PERIMETRO" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"EXPLOSIVOS", sub_novedad:"PAQUETE SOSPECHOSO" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"EXPLOSIVOS", sub_novedad:"AMENAZA DE BOMBA" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"EXPLOSIVOS", sub_novedad:"MATERIAL EXPLOSIVO" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"VEHICULOS", sub_novedad:"ABANDONO DE VEHICULO" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"CONDICIONES INSEGURAS", sub_novedad:"FALTA DE SEÑALIZACION" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"CONDICIONES INSEGURAS", sub_novedad:"ILUMINACION DEFICIENTE" },
+  { zona:"PERIMETRO", direccion:"SEGURIDAD", sub_area:"SEGURIDAD", tipo_novedad:"CONDICIONES INSEGURAS", sub_novedad:"RIESGOS ESTRUCTURALES" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA EN ILUMINACION PERIMETRAL", sub_novedad:"FALLA POR DAÑO EN SISTEMA DE CABLEADO DE ILUMINACION" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"FALLA EN ILUMINACION PERIMETRAL", sub_novedad:"FALLA EN CONTROL DE KNX" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"PERDIDA DE ILUMINACION EN AVISOS DE FACHADA", sub_novedad:"FALLA EN SISTEMA DE ILUMINACION Y DRIVER" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"ELECTRICO", tipo_novedad:"PERDIDA DE ILUMINACION EN AVISOS DE FACHADA", sub_novedad:"FALLA EN SISTEMA ELECTRICO DE ALIMENTACION DE LOS AVISOS" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"TAPONAMIENTO EN TRAMPAS DE GRASA", sub_novedad:"TAPONAMIENTO EN TRAMPAS DE GRASA" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"DAÑO TUBERIAS DE RIEGO", sub_novedad:"DAÑO EN TUBERIAS DE PRESION DE PVC" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"DAÑO TUBERIAS DE RIEGO", sub_novedad:"DAÑO EN MANGUERAS DE DISTRIBUCION DE RIEGO" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"TAPONAMIENTO DE SIFONES DE MUELLES", sub_novedad:"TAPONAMIENTO DE SIFONES DE MUELLES" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"HIDRAULICO", tipo_novedad:"FUGAS DE GAS EN NICHOS", sub_novedad:"FUGAS DE GAS EN NICHOS" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad:"RIESGO DE CAIDA POR FALLAS ESTRUCTURALES DE FACHADA" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad:"RIESGO DE CAIDA POR FALLAS NO ESTRUCTURALES DE FACHADA" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"DESPRENDIMIENTOS DE ADOQUINES", sub_novedad:"DESPRENDIMIENTOS DE ADOQUINES" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"CIVIL", tipo_novedad:"RIESGOS DE CAIDAS DE RAMAS DE ARBOLES", sub_novedad:"RIESGOS DE CAIDAS DE RAMAS DE ARBOLES" },
+  { zona:"PERIMETRO", direccion:"MANTENIMIENTO", sub_area:"ELECTROMECANICO", tipo_novedad:"TAPONAMIENTO DE SIFONES EN REJILLAS DE EXTRACCION", sub_novedad:"TAPONAMIENTO DE SIFONES EN REJILLAS DE EXTRACCION DE MUELLE UNO" },
+  { zona:"PERIMETRO", direccion:"IT", sub_area:"AUTOMATIZACION", tipo_novedad:"CCTV", sub_novedad:"CCTV" },
+  { zona:"PERIMETRO", direccion:"IT", sub_area:"AUTOMATIZACION", tipo_novedad:"PUERTAS DE EMERGENCIA", sub_novedad:"PUERTAS DE EMERGENCIA" },
+  { zona:"PERIMETRO", direccion:"IT", sub_area:"TECNOLOGIA", tipo_novedad:"COMUNICACIONES", sub_novedad:"COMUNICACIONES" },
+  { zona:"PERIMETRO", direccion:"PROYECTOS", sub_area:"SERVICIOS", tipo_novedad:"ACUMULACION DE BASURA", sub_novedad:"ACUMULACION DE BASURA EN ZONAS EXTERIORES Y PERIMETROS" },
+  { zona:"PERIMETRO", direccion:"PROYECTOS", sub_area:"AMBIENTAL", tipo_novedad:"PRESENCIA DE PLAGAS", sub_novedad:"PRESENCIA DE PLAGAS POR MALA GESTION DE RESIDUOS" },
+  { zona:"PERIMETRO", direccion:"PROYECTOS", sub_area:"AMBIENTAL", tipo_novedad:"ACUMULACION DE AGUA ESTANCADA", sub_novedad:"DRENAJES OBSTRUIDOS GENERANDO FOCOS DE INFECCION" }
+];
+
+        // Conversión automática al formato correcto con espacios en las claves
+        const data = rawData.map(item => ({
+            "ZONA ": item.zona || "",
+            "DIRECCION": item.direccion || "",
+            "SUB AREA ": item.sub_area || "",
+            "TIPO DE NOVEDAD buscador": item.tipo_novedad || "",
+            "SUB NOVEDAD ": item.sub_novedad || ""
+        }));
+
+        let selectedZone = null;
+        const zoneView = document.getElementById('zone-view');
+        const searchView = document.getElementById('search-view');
+        const zoneButtons = document.getElementById('zone-buttons');
+        const searchInput = document.getElementById('search-input');
+        const resultsList = document.getElementById('results-list');
+        const backButton = document.getElementById('back-button');
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalSubnovedad = document.getElementById('modal-subnovedad');
+        const pasosList = document.getElementById('pasos-list');
+
+        function renderZoneButtons() {
+            const zones = [...new Set(data.map(item => item["ZONA "]).filter(z => z && z.toUpperCase() !== "IIT"))];
+            console.log("Zonas encontradas:", zones); // Debug
+            zoneButtons.innerHTML = '';
+            
+            if (zones.length === 0) {
+                zoneButtons.innerHTML = '<p class="text-red-600 col-span-4 text-center">Error: No se encontraron zonas en los datos</p>';
+                return;
+            }
+            
+            zones.forEach(zone => {
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.textContent = zone;
+                btn.onclick = () => showSearchResults(zone);
+                zoneButtons.appendChild(btn);
+            });
+        }
+
+        function showSearchResults(zone) {
+            selectedZone = zone;
+            zoneView.classList.add('hidden');
+            searchView.classList.remove('hidden');
+            searchInput.value = '';
+            resultsList.innerHTML = '';
+        }
+
+        function goBackToZones() {
+            selectedZone = null;
+            searchInput.value = '';
+            resultsList.innerHTML = '';
+            searchView.classList.add('hidden');
+            zoneView.classList.remove('hidden');
+        }
+
+        backButton.onclick = goBackToZones;
+
+        function filterResults() {
+            const query = searchInput.value.toLowerCase().trim();
+            resultsList.innerHTML = '';
+            if (query === '') return;
+            const filteredData = data.filter(item => 
+                item["ZONA "] === selectedZone && 
+                item["TIPO DE NOVEDAD buscador"].toLowerCase().includes(query)
+            );
+            const novedades = [...new Set(filteredData.map(item => item["TIPO DE NOVEDAD buscador"]))];
+            renderNovedadButtons(novedades);
+        }
+
+        function renderNovedadButtons(novedades) {
+            resultsList.innerHTML = '';
+            if (novedades.length === 0) {
+                resultsList.innerHTML = '<p class="text-center text-gray-500">No se encontraron resultados.</p>';
+                return;
+            }
+            novedades.forEach(novedad => {
+                const li = document.createElement('div');
+                li.className = 'result-item';
+                li.innerHTML = `<p class="font-medium text-lg text-blue-800">${novedad}</p>`;
+                li.onclick = () => showSubNovedas(novedad);
+                resultsList.appendChild(li);
+            });
+        }
+
+        function showSubNovedas(novedad) {
+            resultsList.innerHTML = '';
+            const subNovedades = data.filter(item => item["ZONA "] === selectedZone && item["TIPO DE NOVEDAD buscador"] === novedad);
+            const backBtn = document.createElement('button');
+            backBtn.className = 'mb-4 text-blue-600 font-medium hover:underline flex items-center';
+            backBtn.innerHTML = `← Volver a la búsqueda`;
+            backBtn.onclick = () => { resultsList.innerHTML = ''; filterResults(); };
+            resultsList.appendChild(backBtn);
+            subNovedades.forEach(item => {
+                const li = document.createElement('div');
+                li.className = 'result-item';
+                li.innerHTML = `<p class="font-medium text-lg text-gray-800">${item["SUB NOVEDAD "]}</p>`;
+                li.onclick = () => showDetails(item);
+                resultsList.appendChild(li);
+            });
+        }
+
+        function generateSteps(zona, tipoNovedad, subNovedad) {
+            const steps = {
+                "MARCA": {
+                    "HURTO": {
+                        "MECHERO": [
+                            "1. El afectado reporta a seguridad CC.",
+                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCV.",
+                            "3. Central de operaciones activa Ponal y Asesor jurídico externo.",
+                            "4. Coordinador de operaciones se entrevista con el administrador de la marca y toma reporte.",
+                            "5. Central de operaciones deja registro en plataforma.",
+                            "6. En caso de aprensión de sospechosos se solicita apoyo ponal."
+                        ],
+                        "ENGAÑO": [
+                            "1. El afectado reporta a seguridad CC.",
+                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCV.",
+                            "3. Central de operaciones activa Ponal y Asesor jurídico externo.",
+                            "4. Coordinador de operaciones se entrevista con el administrador de la marca y toma reporte.",
+                            "5. Central de operaciones deja registro en plataforma.",
+                            "6. En caso de aprensión de sospechosos se solicita apoyo ponal."
+                        ],
+                        "COSQUILLEO": [
+                            "1. El afectado reporta a seguridad CC.",
+                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCV.",
+                            "3. Central de operaciones activa Ponal y Asesor jurídico externo.",
+                            "4. Coordinador de operaciones se entrevista con el afectado y toma reporte.",
+                            "5. Central de operaciones deja registro en plataforma.",
+                            "6. En caso de aprensión de sospechosos se solicita apoyo ponal."
+                        ],
+                        "FACTOR OPORTUNIDAD": [
+                            "1. El afectado reporta a seguridad CC.",
+                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimeinto en CCV.",
+                            "3. Central de operaciones activa Ponal y Asesor jurídico externo.",
+                            "4. Coordinador de operaciones se entrevista con el afectado y toma reporte.",
+                            "5. Central de operaciones deja registro en plataforma.",
+                            "6. En caso de aprensión de sospechosos se solicita apoyo ponal."
+                        ],
+                        "ATRACO": [
+                            "1. El afectado reporta a seguridad CC.",
+                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCV.",
+                            "3. Central de operaciones activa Ponal y Asesor jurídico externo.",
+                            "4. Coordinador de operaciones se entrevista con el afectado y toma reporte.",
+                            "5. Central de operaciones deja registro en plataforma.",
+                            "6. En caso de aprensión de sospechosos se solicita apoyo ponal."
+                        ],
+                        "FLETEO": [
+                            "1. El afectado reporta a seguridad CC.",
+                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCTV.",
+                            "3. Central de operaciones activa Ponal y Asesor jurídico externo.",
+                            "4. Coordinador de operaciones se entrevista con el afectado y con la seguridad del banco toma reporte.",
+                            "5. Central de operaciones deja registro en plataforma.",
+                            "6. En caso de aprensión de sospechosos se solicita apoyo ponal."
+                        ],
+                   },
+                   "HOMICIDIO": {
+                        "AGRESION CON ARMA BLANCA": [
+                            "1. Conocimiento de la novedad por afectado o anfitriones de seguridad.",
+                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCTV.",
+                            "3. Activacion de brigadistas, Solicitud de atencion de area protegida y ambulancia para tencion de heridos, llamado 123 linea de emergencia.",
+                            "4. Activacion codigo rojo y aislamiento de carpas, biombos y pendones.",
+                            "5. Se realiza despeje y acordeonamiento del area.",
+                            "6. Preservacion de zona y elementos probatorios.",
+                            "7. Entrega de informe a la policia nacional."
+                        ],
+                        "AGRESION CON ARMA DE FUEGO": [
+                            "1. Conocimiento de la novedad por afectado o anfitriones de seguridad.",
+                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCTV.",
+                            "3. Activacion de brigadistas, solicitud de atencion de area protegida y ambulancia para tencion de heridos, llamado 123 linea de emergencia.",
+                            "4. Activacion codigo rojo y aislamiento de carpas, biombos y pendones.",
+                            "5. Se realiza despeje y acordeonamiento del area.",
+                            "6. Preservacion de zona y elementos probatorios.",
+                            "7. Entrega de informe a la policia nacional."
+                        ],
+                   },
+                   "SUICIDIO": {
+                        "INTENTO DE SUICIDIO": [
+                            "1. Identificacion de la novedad por parte de la persona que presencia los hechos.",
+                            "2. Acercamiento del personal de seguridad brigadistas y acercamiento del area protegida.",
+                            "3. Traslado de la persona a primeros auxilios (de ser posible el traslado de la persona), activacion linea de emergencia 123 y ponal.",
+                            "4. De acuerdo a valoracion, solicitud de ambulancia y llamado de familiares por intermedio de policia nacional."
+                        ],
+                   },
+                   "CRISIS EMOCIONALES": {
+                        "COMPORTAMIENTOS INUSUALES DE VISITANTES/EMPLEADOS": [
+                            "Se requiere presencia de encargado y/o administrador de la marca.",
+                            "1. Identificacion de la novedad por parte de la persona que presencia los hechos.",
+                            "2. Acercamiento del personal de seguridad brigadistas y acercamiento del area protegida.",
+                            "3. Traslado de la persona a primeros auxilios (de ser posible el traslado de la persona), activacion linea de emergencia 123 y ponal.",
+                            "4. De acuerdo a valoracion, solicitud de ambulancia y llamado de familiares por intermedio de policia nacional."
+                        ],
+                   },
+                   "RIÑA": {
+                        "FISICA": [
+                            "1. Identificacion de la novedad.",
+                            "2. Personal de seguridad identifica el agresor y/o agresores.",
+                            "3. Se aisla la zona de conflicto.",
+                            "4. Central de operaciones hace llamado de linea de emergencia 123 policia nacional y linea de abogados externos.",
+                            "5. De ser posible las personas son conducidas al area de sotano 1 venezuela."
+                        ],
+                        "VERBAL": [
+                            "1. Identificacion de la novedad.",
+                            "2. Personal de seguridad identifica el agresor y/o agresores.",
+                            "3. Se aisla la zona de conflicto.",
+                            "4. Central de operaciones hace llamado de linea de emergencia 123 policia nacional y linea de abogados externos.",
+                            "5. De ser posible las personas son conducidas al area de sotano 1 venezuela."
+                        ],
+                   },
+                   "LESIONES": {
+                        "FISICAS": [
+                            "1. Identificacion de la novedad.",
+                            "2. Personal de seguridad identifica el agresor y/o agresores.",
+                            "3. Se aisla la zona de conflicto.",
+                            "4. Central de operaciones hace llamado de linea de emergencia 123 policia nacional y linea de abogados externos, al dilimir la situacion se ofrece atencion de area pritegida.",
+                            "5. De ser posible las personas son conducidas al area de sotano 1 venezuela."
+                        ],
+                        "GOLPES CON OBJETOS": [
+                            "1. Identificacion la persona.",
+                            "2. Llamado de brigadistas de seguridad.",
+                            "3. Traslado de la persona.",
+                            "4. El coordinador de operaciones reporta en la plataforma."
+                        ],
+                        "QUEMADURAS": [
+                            "1. Identificacion la persona.",
+                            "2. Llamado de brigadistas de seguridad.",
+                            "3. Traslado de la persona.",
+                            "4. El coordinador de operaciones reporta en la plataforma."
+                        ],
+                        "CORTES": [
+                            "1. Identificacion la persona.",
+                            "2. Llamado de brigadistas de seguridad.",
+                            "3. Traslado de la persona.",
+                            "4. El coordinador de operaciones reporta en la plataforma."
+                        ],
+                        "CAIDAS": [
+                            "1. Identificacion la persona.",
+                            "2. Llamado de brigadistas de seguridad.",
+                            "3. Traslado de la persona.",
+                            "4. El coordinador de operaciones reporta en la plataforma."
+                        ],
+                        "CAUSADAS POR ANIMALES": [
+                            "1. Reportar a la central de operaciones y activar primeros auxilios.",
+                            "2. Traslado de paciente a primeros auxilios para atención y solicitud de soportes de vacunación del animal.",
+                            "3. Dejar reporte escrito datos y acuerdo entre las partes de ser necesario solicitar Policía nacional."
+                        ],
+                   },
+                   "DAÑO EN BIEN AJENO": {
+                        "VANDALISMO": [
+                            "1. Verficiacion de la novedad por parte del personal de seguridad y el coordinador de operaciones.",
+                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCTV.",
+                            "3. En caso de identificacion del causante se realiza llamdo de policia nacional, abogados externos para pequeñas causas y se realiza acta de conciliacion o pago por el daño causado.",
+                            "4. De no darse el anterior punto se debera hacer un reporte del area encargada para su atencion."
+                        ],
+                        "DAÑO EN BIENES E INMUEBLES": [
+                            "1. Verficiacion de la novedad por parte del personal de seguridad y el coordinador de operaciones.",
+                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCTV.",
+                            "3. En caso de identificacion del cadsahte se realiza llamdo de policia nacional, abogados externos para pequeñas causas y se realiza acta de conciliacion o pago por el daño causado.",
+                            "4. De no darse el anterior punto se debera hacer un reporte del area encargada para su atencion."
+                        ],
+                        "GRAFITI": [
+                            "1. Verficiacion de la novedad por parte del personal de seguridad y el coordinador de operaciones.",
+                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCTV.",
+                            "3. En caso de identificacion del causante se realiza llamdo de policia nacional, abogados externos para pequeñas causas y se realiza acta de conciliacion o pago por el daño causado.",
+                            "4. De no darse el anterior punto se debera hacer un reporte del area encargada para su atencion."
+                        ],
+                   },
+                   "SUPLANTACION": {
+                        "SUPLANTACION DE IDENTIDAD": [
+                            "1. Identificacion de la novedad.",
+                            "2. Llamada linea 123 policia nacional para identificacion.",
+                            "3. En caso de ser contratista se restringe el ingreso y se notifica al area encargada o marca del perosnal que causo la suplantacion.",
+                            "4. Se realiza el reporte por parte de coordiandor de operaciones."
+                        ],
+                        "USO DE DOCUMENTACION FALSA": [
+                            "1. Identificacion de la novedad.",
+                            "2. Llamada linea 123 policia nacional para identificacion.",
+                            "3. En caso de ser contratista se restringe el ingreso y se notifica al area encargada o marca del perosnal que causo la suplantacion.",
+                            "4. Se realiza el reporte por parte de coordiandor de operaciones."
+                        ],
+                        "ACCESO NO AUTORIZADO": [
+                            "1. Identificacion de la novedad.",
+                            "2. Llamada linea 123 policia nacional para identificacion.",
+                            "3. En caso de ser contratista se restringe el ingreso y se notifica al area encargada o marca del perosnal que causo la suplantacion.",
+                            "4. Se realiza el reporte por parte de coordiandor de operaciones."
+                        ],
+                   },
+                   "ACTOS OBSENOS": {
+                        "EXHIBICIONISMO": [
+                            "1. Identificacion de la situacion por parte del anfitrion de seguridad.",
+                            "2. Central de operaciones realiza llamado de policia nacional.",
+                            "3. El coordinador de operaciones toma contacto con el y/o afectados.",
+                            "4. Se ofrece atencion de primeros auxilios.",
+                            "5. Reporte de novedad por parte de coordinador de operaciones."
+                        ],
+                        "ACOSO SEXUAL": [
+                            "1. Identificacion de la situacion por parte del anfitrion de seguridad.",
+                            "2. Central de operaciones realiza llamado de policia nacional.",
+                            "3. El coordinador de operaciones toma contacto con el y/o afectados.",
+                            "4. Se ofrece atencion de primeros auxilios.",
+                            "5. Reporte de novedad por parte de coordinador de operaciones."
+                        ],
+                        "RELACIONES SEXUALES": [
+                            "1. Identificacion de la situacion por parte del anfitrion de seguridad.",
+                            "2. Central de operaciones realiza llamado de policia nacional.",
+                            "3. El coordinador de operaciones toma contacto con el y/o afectados.",
+                            "4. Reporte de novedad por parte de coordinador de operaciones."
+                        ],
+                   },
+                   "FALLA EN LA RED ELECTRICA EN EL LOCAL": {
+                        "DAÑO DE EQUIPOS ELECTRICOS POR MICROCORTE": [
+                            "1. Informe de la central para el apoyo de mantenimiento para evaluar la fuente de la novedad eléctrica.",
+                            "2. Confirmar si es una afectación externa del operador de red o interna por alguna actividad eléctrica realizada por el área de mantenimiento.",
+                            "3. De acuerdo con el nivel de afectación se definirán las acciones a realizar ya sea micro cortes de energía, falla total de la red o falla parcial tanto en locales como en zona común.",
+                            "4. En caso de que las fallas sean por causas de distribuidor de red se realizara el llamado a la linea de emergencias del comercializador de red para entender la causa del daño.",
+                            "5. En caso de ser una falla interna se revisara si se puede solucionar con personal interno o se requiere de proveedor de mantenimiento eléctrico del centro comercial."
+                        ],
+                   },
+                   "RUPTURA O FALLA EN TUBERIAS": {
+                        "TUBERIAS DE AGUAS LLUVIAS, SANITARIAS": [
+                            "- Identificar punto exacto de falla.",
+                            "- Delimitar zona yretirar elecmentos sencibles.",
+                            "- Acopiar la mayor cantidad de agua en buguis y dirigia a pozo eyector cuartos de bombas perú.",
+                            "- Sacar listado materiales y programar arreglo lo antes posible."
+                        ],
+                        "RED DE AGUA POTABLE LOCALES": [
+                            "- Identificar punto exacto de falla.",
+                            "- Identificar zona afectada(plaza pisos)",
+                            "- Cerrar valvula de control correspondiente para controlar fuga.",
+                            "- Informar a las marcas correspondientes novedad presentada y dar un tiempo estimado.",
+                            "- Sacar listado de materiales y generar arreglo lo antes posible."
+                        ],
+                   },
+                   "FUGA DE GAS": {
+                        "FUGA DE GAS DENTRO DE LA MARCA": [
+                            "- Cerrar todas las valvulas del local posible.",
+                            "- Con los respectivos EPP y medidor de gas identificar punto de fuga.",
+                            "- Despues de identificar punto evaluar si la fuga se puede contener con valvula principal de local, si no es asi proceder a cerrar inmediatamente registro del medidor principal.",
+                            "- Informar a la marca y activar a VANTI segun corresponda."
+                        ],
+                        "FUGA DE GAS EN NICHO DE MEDIDORES": [
+                            "- Informar y activar de inmediato a VANTI.",
+                            "- Con los respectivos EPP y medidor de gas identificar punto de fuga.",
+                            "- Cerrar si se hace necesario el regular de la zona afectada.",
+                            "- Avisar a las amrcas que puedan verse afectadas.",
+                            "- Señalizar zona"
+                        ],
+                   },
+                },
+                "ZONA COMUN": {
+                   "MASCOTAS": {
+                        "ANIMALES SUELTOS": [
+                            "Reportar a la central de operaciones y coordinador de operaciones y manejador canino (Securitas).",
+                            "Verificar si este posee correa o identificación, de ser asi, se realiza perifoneo y búsqueda del dueño.",
+                            "Si el animal no tiene dueño se deberá informar a unidad de protección animal de la alcaldía y seguir indicaciones."
+                        ],
+                   },
+                   "CONSUMO DE SUSTANCIAS PSICOACTIVAS (BAÑO)": {
+                        "DROGAS Y/O SUSTANCIAS ALUCINOGENAS": [
+                            "1. Debe ser reportado por el anfitrión de Casalimpia a su supervisor de turno.",
+                            "2. El supervisor de turno debe comunica a Coordinador de Operaciones y Central.",
+                            "3. Entra a revisar el tema personal de seguridad."
+                        ],
+                   },
+                   "SONIDO": {
+                        "ALTAVOCES DAÑADOS": [
+                            "1. Se informa a la central de operaciones para verificar el funcionamiento.",
+                            "2. La central de operaciones verifica y corrige.",
+                            "3. Si la central no puede solucionar reporta al contratista encargado para que pueda brindar solución."
+                        ],
+                   },
+                   "AMBIENTAL": {
+                        "Malos olores por falta de limpieza en baños y áreas de comida.": [
+                            "El coordinador de operaciones o la central activa a casa limpia y este a su vez activa su propio protocolo de limpieza y desinfección."
+                        ],
+                   },
+                },
+                "ESTACIONAMIENTO": {
+                   "ACCIDENTE DE TRANSITO": {
+                        "CHOQUE CONTRA ESTRUCTURAS": [
+                            "1. Reportar a la central de estacionamiento y coordinador de operaciones.",
+                            "2. Si no compromete lesiones a personas, se insta a las personas a llegar a un acuerdo mutuo, de no ser asi se solicitará apoyo de policia Nacional.",
+                            "3. De existir lesiones se asistira con el arca protegida del CC.",
+                            "4. Se solicitará policía nacional y los intervinientes no podrán salir del centro comercial hasta tanto llegue la autoridad competente."
+                        ],
+                   },
+                   "ACTOS OBSCENOS": {
+                        "ACTOS SEXUALES": [
+                            "1. El supervisor de turno debe comunicar a Coordinador de Operaciones y Central.",
+                            "2. Entra a revisar el tema con personal de seguridad."
+                        ],
+                   },
+                   "MASCOTAS": {
+                        "ANIMALES ABANDONADOS": [
+                            "1. Reportar a la central de operaciones y coordinador de operaciones y manejador canino (Securitas).",
+                            "2. Verificar si este posee correa o identificación, de ser asi, se realiza perifoneo y búsqueda del dueño.",
+                            "3. Si el animal no tiene dueño se deberá informar a unidad de protección animal de la alcaldía y seguir indicaciones."
+                        ],
+                   },
+                   "AMBIENTAL": {
+                        "Acumulación de residuos centro de acopio estacionamiento": [
+                            "(tener en cuenta la capacidad del centro de acopio y el día de la semana para determinar la novedad para saber si es contingencia)",
+                            "Tipos de residuos:",
+                            "1. Reportar a la coordinación ambiental la novedad (orgánicos, aprovechables, no aprovechables)",
+                            "2. De acuerdo con la novedad:",
+                            "NO APROVECHABLES: se activa plan de contingencia que es apoyo con un vehículo externo para la recolección que tenga permiso para ir al relleno sanitario.",
+                            "APROVECHABLES: disponer de una bodega dentro del mall para acopiar las pacas ya organizadas y tener plan B de empresas que tienen ese servicio.",
+                            "ORGANICOS: tener contacto y activar una empresa que tenga el servicio de recolección."
+                        ],
+                   },
+                },
+                "PERIMETRO": {
+                   "PRESENCIA DE PLAGAS ": {
+                        "PRESENCIA DE PLAGAS POR MALA GESTION DE RESIDUOS": [
+                            "1. Reportar a la central de operaciones y esta a su vez a la coordinación ambiental.",
+                            "2. Se hace seguimiento de lugar frecuentado y tiempos de permanencia.",
+                            "3. Se observa estado del animal y se custodia en medida de lo posible mientras llega el proveedor de manejo de plagas.",
+                            "4. No es recomendado, sin embargo, si se siente que puede atraparlo se recomienda utilizar algún elemento cercano para impedir que el animal escape como por ejemplo canecas o conos y así asegurar la captura del animal mientras llega el proveedor de manejo de plagas."
+                        ],
+                   },
+                },
+            };
+
+            return (steps[zona]?.[tipoNovedad]?.[subNovedad]) ||
+                ["Evaluar la situación.", "Notificar al personal responsable.", "Aislar la zona.", "Documentar lo ocurrido.", "Seguir protocolos establecidos."];
+        }
+
+        function showDetails(item) {
+            modalTitle.textContent = item["TIPO DE NOVEDAD buscador"];
+            modalSubnovedad.textContent = `Sub-novedad: ${item["SUB NOVEDAD "]}`;
+            const pasos = generateSteps(item["ZONA "], item["TIPO DE NOVEDAD buscador"], item["SUB NOVEDAD "]);
+            pasosList.innerHTML = '';
+            const pasosGenerales = [
+                "Evaluar la situación.",
+                "Notificar al personal responsable.",
+                "Aislar la zona.",
+                "Documentar lo ocurrido.",
+                "Seguir protocolos establecidos."
+            ];
+            pasos.forEach((paso, idx) => {
+                const li = document.createElement('li');
+                li.style.animation = 'fadeInStep 0.5s ease both';
+                li.style.animationDelay = `${idx * 0.07}s`;
+                let colorClass = pasosGenerales.includes(paso)
+                    ? 'text-yellow-600'
+                    : 'text-gray-900';
+                li.className = `transition-all duration-300 shadow-sm border border-gray-200 mb-1 px-4 py-2 rounded-lg flex items-center ${colorClass}`;
+                li.innerHTML = `${paso}`;
+                pasosList.appendChild(li);
+            });
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() { 
+            modal.classList.add('hidden'); 
+        }
+
+        window.onload = renderZoneButtons;
+    </script>
+</body>
+</html>

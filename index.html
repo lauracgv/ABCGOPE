@@ -2,1843 +2,616 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de novedades</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
-
-    /* Estilo base */
-    body {
-        font-family: 'Inter', sans-serif;
-        background: url('logo-flor.png') center center no-repeat;
-        background-size: 400px;
-        background-attachment: fixed;
-        color: #1e293b;
-        margin: 0;
-    }
-
-    .container {
-        max-width: 1000px;
-        margin: auto;
-        padding: 2rem;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    /* Tarjetas con efecto hover */
-    .card {
-        background-color: white;
-        padding: 2rem;
-        border-radius: 1.5rem;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-        width: 100%;
-        margin-top: 1.5rem;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-    .card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-    }
-
-    /* Botones más llamativos */
-    .btn {
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
-        color: white;
-        padding: 0.85rem 1.75rem;
-        border-radius: 0.75rem;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        letter-spacing: 0.5px;
-        box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
-        transition: all 0.25s ease;
-    }
-    .btn:hover {
-        transform: translateY(-3px) scale(1.03);
-        background: linear-gradient(135deg, #2563eb, #1e40af);
-        box-shadow: 0 6px 15px rgba(37, 99, 235, 0.4);
-    }
-    .btn:active {
-        transform: translateY(0) scale(0.98);
-    }
-
-    /* Resultados con animación sutil */
-    .result-item {
-        background-color: #919ba5;
-        padding: 1rem;
-        border-radius: 0.75rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        margin-bottom: 0.75rem;
-        border: 1px solid #6181aa;
-    }
-    .result-item:hover {
-        background-color: #1e84c8;
-        border-color: #1a8dbe;
-    }
-
-    /* Modal */
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(18, 83, 186, 0.6);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-        animation: fadeIn 0.3s ease;
-    }
-    .modal-content {
-        background-color: white;
-        padding: 2rem;
-        border-radius: 1.25rem;
-        width: 90%;
-        max-width: 550px;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-        animation: scaleUp 3.0s ease;
-    }
-
-    /* Animaciones */
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    @keyframes scaleUp {
-        from { transform: scale(0.9); opacity: 0; }
-        to { transform: scale(1); opacity: 1; }
-    }
-
-    /* Logo con degradado */
-    .logo-gradient {
-        /* Aplica un degradado sobre el logo usando mezcla de colores */
-        /* Si el logo es PNG con transparencia, esto funciona bien */
-        /* Si es JPG, se recomienda usar PNG para mejor efecto */
-        position: relative;
-        z-index: 1;
-    }
-    .logo-gradient::after {
-        content: "";
-        position: absolute;
-        left: 0; top: 0; right: 0; bottom: 0;
-        z-index: 2;
-        pointer-events: none;
-        border-radius: 1rem;
-        background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 50%, #2563eb 100%);
-        opacity: 0.25;
-        mix-blend-mode: multiply;
-    }
-</style>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Buscador de Novedades - Centro Comercial</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0056b3 0%, #00a6ff 100%);
+            padding: 30px 40px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            margin: 10px 0 0;
+            opacity: 0.95;
+            font-size: 1.1em;
+        }
+        
+        .content {
+            padding: 30px 40px 40px;
+        }
+        
+        .search-section {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            flex: 2;
+            min-width: 250px;
+        }
+        
+        .image-container {
+            flex: 1;
+            min-width: 180px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .draggable-image {
+            width: 100%;
+            max-width: 200px;
+            cursor: grab;
+            transition: transform 0.2s, filter 0.2s;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .draggable-image:active {
+            cursor: grabbing;
+        }
+        
+        .draggable-image.dragging {
+            cursor: grabbing;
+            opacity: 0.9;
+            transform: scale(1.05);
+            transition: none;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .drag-hint {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: #888;
+            background: rgba(255,255,255,0.9);
+            padding: 2px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        
+        .search-input-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        #buscador {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        
+        #buscador:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 0 3px rgba(0,86,179,0.1);
+        }
+        
+        #btn-buscar {
+            padding: 15px 35px;
+            font-size: 16px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #0056b3, #00a6ff);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        #btn-buscar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,86,179,0.3);
+        }
+        
+        .stats {
+            margin: 20px 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .sinonimos-nota {
+            background: #e8f0fe;
+            color: #0056b3;
+            padding: 6px 15px;
+            border-radius: 25px;
+            font-size: 0.85em;
+        }
+        
+        .results-table-wrapper {
+            max-height: 550px;
+            overflow-y: auto;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        th {
+            background: #f8f9fa;
+            padding: 14px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #dee2e6;
+            position: sticky;
+            top: 0;
+            background: #f8f9fa;
+            z-index: 10;
+        }
+        
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        tr:hover td {
+            background: #f0f7ff;
+        }
+        
+        .clickable-row {
+            cursor: pointer;
+        }
+        
+        .tipo-novedad-badge {
+            background: #fff3e0;
+            color: #e67e22;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-block;
+        }
+        
+        .subarea-text {
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .highlight {
+            background-color: #ffc107;
+            font-weight: 500;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        
+        .no-result {
+            text-align: center;
+            padding: 60px;
+            color: #6c757d;
+            font-size: 1.1em;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            max-width: 650px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #0056b3, #00a6ff);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 24px 24px 0 0;
+            position: sticky;
+            top: 0;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        
+        .modal-header p {
+            margin: 8px 0 0;
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .pasos-detalle {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 16px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            font-family: inherit;
+            border-left: 4px solid #0056b3;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 28px;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.2s;
+        }
+        
+        .close-modal:hover {
+            transform: scale(1.1);
+        }
+        
+        .modal-footer {
+            padding: 15px 25px 25px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .btn-cerrar {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        .btn-cerrar:hover {
+            background: #5a6268;
+        }
+        
+        .info-chip {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            .search-section {
+                flex-direction: column;
+            }
+            .image-container {
+                order: -1;
+            }
+            .draggable-image {
+                max-width: 140px;
+            }
+            th, td {
+                font-size: 13px;
+                padding: 10px 8px;
+            }
+            .tipo-novedad-badge {
+                font-size: 12px;
+                padding: 4px 10px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-100" style="background: url('logo-flor.png') center center no-repeat; background-size: 400px; background-attachment: fixed; opacity: 1;">
-
-    <div class="container">
-        <!-- Logo con degradado -->
-        <img src="logo.png" alt="Logo ABC"
-            class="mb-4 h-20 w-auto mx-auto logo-gradient"
-            style="filter: drop-shadow(0 0 8px #3b82f6);"
-        >
-        <h1 class="text-3xl font-bold mb-6 text-center text-blue-800">Buscador de Novedades</h1>
-        
-        <!-- Vista inicial de botones de zona -->
-        <div id="zone-view" class="w-full">
-            <h2 class="text-xl font-semibold mb-4 text-center">Selecciona una zona:</h2>
-            <div id="zone-buttons" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Botones dinámicos -->
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🔍 Buscador de Novedades Operativas</h1>
+        <p>Encuentra procedimientos por palabras clave • Haz clic en cualquier resultado para ver los pasos detallados</p>
+    </div>
+    
+    <div class="content">
+        <div class="search-section">
+            <div class="search-box">
+                <div class="search-input-group">
+                    <input type="text" id="buscador" placeholder="Ej: robo, incendio, pelea, policia, caida, fuga, acoso...">
+                    <button id="btn-buscar">🔎 Buscar</button>
+                </div>
+                <div class="stats">
+                    <span id="result-count">⚡ Esperando búsqueda</span>
+                    <span class="sinonimos-nota">✨ Sinónimos: 'robo' → 'hurto', 'pelea' → 'riña', 'fuego' → 'incendio'</span>
+                </div>
             </div>
-            
-            <!-- Imagen debajo de los botones -->
-            <div class="mt-8 flex justify-center">
-                <img src="[UNSET].jpg" alt="Imagen descriptiva" class="rounded-xl shadow-lg max-w-full h-auto" style="max-height: 400px;">
+            <div class="image-container">
+                <img id="equipoImage" class="draggable-image" src="https://cdn-icons-png.flaticon.com/512/4324/4324433.png" alt="Equipo de seguridad">
+                <div class="drag-hint">🖱️ Haz clic y arrastra para moverme</div>
             </div>
         </div>
-
-        <!-- Vista búsqueda -->
-        <div id="search-view" class="w-full hidden">
-            <button id="back-button" class="mb-4 text-blue-600 font-medium hover:underline flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                </svg>Volver a Zonas
-            </button>
-            <div class="card">
-                <div class="relative mb-4 flex items-center justify-center">
-                    <input type="text" id="search-input"
-                        placeholder="Buscar tipo de novedad..."
-                        onkeyup="filterResults()"
-                        class="w-full px-5 py-3 rounded-xl border-2 border-gray-300 bg-gradient-to-r from-blue-100 via-white to-blue-100 focus:outline-none focus:border-blue-500 focus:shadow-lg transition-all duration-300 pl-12 text-lg font-medium shadow-md hover:shadow-xl"
-                        style="transition: box-shadow 0.3s, border-color 0.3s;"
-                    >
-                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                            class="h-7 w-7 text-blue-400 animate-pulse"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <circle cx="11" cy="11" r="8" stroke-width="2" stroke="currentColor" fill="none"/>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65" stroke-width="2" stroke="currentColor"/>
-                        </svg>
-                    </span>
-                </div>
-                <div id="results-list" class="space-y-3 max-h-96 overflow-y-auto pr-2">
-                    <!-- Resultados -->
-                </div>
+        
+        <div class="results-table-wrapper">
+            <div id="resultados">
+                <div class="no-result">🔎 Escribe algo en el buscador para comenzar...</div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Modal -->
-    <div id="modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="modal-title" class="text-xl font-bold"></h3>
-                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+<div id="modalPasos" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close-modal">&times;</span>
+            <h3 id="modalTipoNovedad">Tipo de Novedad</h3>
+            <p id="modalSubtipo">Subtipo</p>
+        </div>
+        <div class="modal-body">
+            <div class="pasos-detalle" id="modalPasosTexto">
+                Pasos a seguir...
             </div>
-            <p id="modal-subnovedad" class="text-lg text-gray-700 mb-4"></p>
-            <ul id="pasos-list" class="list-decimal list-inside space-y-2">
-                <!-- Pasos dinámicos -->
-            </ul>
+            <div id="modalInfoExtra" style="margin-top: 15px;">
+                <span class="info-chip" id="modalSubArea"></span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cerrar">Cerrar</button>
         </div>
     </div>
-    <script>
+</div>
+
+<script>
+(function() {
+    const datosExcel = [
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "HURTO", "MECHERO", "1. El afectado reporta a seguridad CC<br>2. Seguridad CC informa novedad por radio y a la central de operaciones de las caracteristicas de sospechosos para seguimeinto en CCTV.<br>3. central de operaciones activa Ponal y Asesor jurídico externo<br>4. Coordinador de operaciones se entrevista con el administrador de la marca y toma reporte <br>5. Central de operaciones deja registro en plataforma.<br>6. En caso de aprension de sospechosos se solicita apoyo ponal"],
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "HURTO", "ENGAÑO", "1. El afectado reporta a seguridad CC<br>2. Seguridad CC informa novedad por radio y a la central de operaciones de las caracteristicas de sospechosos para seguimeinto en CCV.<br>3. central de operaciones activa Ponal y Asesor jurídico externo<br>4. Coordinador de operaciones se entrevista con el administrador de la marca y toma reporte <br>5. Central de operaciones deja registro en plataforma.<br>6. En caso de aprension de sospechosos se solicita apoyo ponal"],
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "HURTO", "COSQUILLEO", "1. El afectado reporta a seguridad CC<br>2. Seguridad CC informa novedad por radio y a la central de operaciones de las caracteristicas de sospechosos para seguimeinto en CCV.<br>3. central de operaciones activa Ponal y Asesor jurídico externo<br>4. Coordinador de operaciones se entrevista con el afectado y toma reporte <br>5. Central de operaciones deja registro en plataforma.<br>6. En caso de aprension de sospechosos se solicita apoyo ponal"],
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "HURTO", "ATRACO", "1. El afectado reporta a seguridad CC<br>2. Seguridad CC informa novedad por radio y a la central de operaciones de las caracteristicas de sospechosos para seguimiento en CCV.<br>3. central de operaciones activa Ponal y Asesor jurídico externo<br>4. Coordinador de operaciones se entrevista con el afectado y toma reporte <br>5. Central de operaciones deja registro en plataforma.<br>6. En caso de aprension de sospechosos se solicita apoyo ponal"],
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "HOMICIDIO", "AGRESION CON ARMA BLANCA", "1. Conocimiento de la novedad por afectado o anfitriones de seguridad.<br>2. Seguridad CC informa novedad por radio y a la central de operaciones de las caracteristicas de sospechosos para seguimiento en CCTV.<br>3.Activacion de brigadistas, Solicitud de atencion de area protegida y ambulancia para tencion de heridos, llamado 123 linea de emergencia<br>4. Activacion codigo rojo y alistamiento de carpas, biombos y pendones. <br>5. Se realiza despeje y acordeonamiento del area.<br>6. Preservacion de zona y elementos probatorios.<br>7. Entrega de informe a la policia nacional"],
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "HOMICIDIO", "AGRESION CON ARMA DE FUEGO", "1. Conocimiento de la novedad por afectado o anfitriones de seguridad.<br>2. Seguridad CC informa novedad por radio y a la central de operaciones de las caracteristicas de sospechosos para seguimiento en CCTV.<br>3.Activacion de brigadistas, solicitud de atencion de area protegida y ambulancia para tencion de heridos, llamado 123 linea de emergencia<br>4. Activacion codigo rojo y alistamiento de carpas, biombos y pendones. <br>5. Se realiza despeje y acordeonamiento del area.<br>6. Preservacion de zona y elementos probatorios.<br>7. Entrega de informe a la policia nacional"],
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "SUICIDIO", "INTENTO DE SUICIDIO", "1. Identificacion de la novedad por parte de la persona que presencia los hechos.<br>2. Acercamiento del personal de seguridad brigadistas y acercamiento del area protegida.<br>3. Traslado de la persona a primeros auxilios (de ser posible el traslado de la persona), activacion linea de emergencia 123 y ponal. <br>4. De acuerdo a valoracion, solicitud de ambulancia y llamado de familiares por intermedio de policia nacional."],
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "RIÑA", "FISICA", "1. Identificacion de la novedad 2.Personal de seguridad identifica el agresor y/o agresores.<br>3. Se aisla la zona de conflicto <br>4. Central de operaciones hace llamado de linea de emergencia 123 policia nacional y linea de abogados externos.<br>5. De ser posible las personas son conducidas al area de sotano 1 venezuela."],
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "RIÑA", "VERBAL", "1. Identificacion de la novedad 2.Personal de seguridad identifica el agresor y/o agresores.<br>3. Se aisla la zona de conflicto <br>4. Central de operaciones hace llamado de linea de emergencia 123 policia nacional y linea de abogados externos.<br>5. De ser posible las personas son conducidas al area de sotano 1 venezuela."],
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "LESIONES", "CAIDAS", "1. Identificacion la persona <br>2. Llamado de brigadistas de seguridad<br>3. Traslado de la persona <br>4. El coordinador de operaciones reporta en la plataforma"],
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "DAÑO EN BIEN AJENO", "VANDALISMO", "1. Verficiacion de la novedad por parte del personal de seguridad y el coordinador de operaciones.<br>2. Seguridad CC informa novedad por radio y a la central de operaciones de las caracteristicas de sospechosos para seguimiento en CCTV.<br>3. En caso de identificacion del causante se realiza llamdo de policia nacional, abogados externos para pequeñas causas y se realiza acta de conciliacion o pago por el daño causado.<br>4. De no darse el anterior punto se debera hacer un reporte del area encargada para su atencion."],
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "ACTOS OBSENOS", "ACOSO SEXUAL", "1. Identificacion de la situacion por parte del anfitrion de seguridad<br>2. Central de operaciones realiza llamado de policia nacional <br>3. El coordinador de operaciones toma contacto con el y/o afectados.<br>4. Se ofrece atencion de primeros auxilios.<br>5. Reporte de novedad por parte de coordinador de operaciones."],
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "CONSUMO DE SUSTANCIAS PSICOACTIVAS", "ALCOHOL", "1 Se infoma al coordiandor de operación quien se pondra en contacto con el administrador de la marca informando la prohibicion del consumo 2 en caso de no atender la solicitud del coordinador se solicita apoyo de la policia nacional <br>3 de acuerdo al apoyo de la policia nacional se genera el comunicado al represnetante de la marca o intermedio de la direccion de marcas"],
+        ["MARCA", "SEGURIDAD", "SEGURIDAD", "EXPLOSIVOS", "PAQUETE SOSPECHOSO", "1 Reporte del equipo de seguridad <br>2 aislamiento de la zona<br>3 llamado al manejador canino <br>a) si se detecta que es positiva se procede a llamar policia nacional se aisla el perimetro salvaguardando los visitantes y se activa validaciones de acuerdo protocolos de explosivos <br>b) si da negativo el supervisor de vigilancia recoge el paquete y <br>4 se activa procedimeinto de objetos olvidados"],
+        ["ZONA COMUN", "SEGURIDAD", "SEGURIDAD", "MASCOTAS", "ANIMALES SUELTOS", "Reportar a la central de operaciones y coordinador de operaciones y manejador canino (Securitas).<br>Verificar si este posee correa o identificación, de ser así, se realiza perifoneo y búsqueda del dueño<br>Si el animal no tiene dueño se deberá informar a unidad de protección animal de la alcaldía y seguir indicaciones."],
+        ["ESTACIONAMIENTO", "SEGURIDAD", "SEGURIDAD", "ACCIDENTE DE TRANSITO", "CHOQUE CONTRA ESTRUCTURAS", "1. Reportar a la central de estacionamiento y coordinador de operaciones.<br>2. Si no compromete lesiones a personas, se insta a las personas a llegar a un acuerdo mutuo, de no ser así se solicitará apoyo de policía Nacional. <br>3. De existir lesiones se asistira con el area protegida del CC <br>4. Se solicitará policía nacional y los intervinientes no podrán salir del centro comercial hasta tanto llegue la autoridad competente."],
+        ["PERIMETRO", "PROYECTOS", "AMBIENTAL", "Presencia de plagas", "Presencia de plagas", "1. Reportar a la central de operaciones (si eres anfitrion de seguridad realizar el reporte por el conducto autorizado) y esta a su vez a la coordinación ambiental.<br>2. Se hace seguimiento de lugar frecuentado y tiempos de permanencia.<br>3. Se observa estado del animal y se custodia en medida de lo posible mientras llega el proveedor de manejo de plagas.<br>4. No es recomendado, sin embargo, si se siente que puede atraparlo se recomienda utilizar algún elemento cercano para impedir que el animal escape como por ejemplo canecas o conos y así asegurar la captura del animal mientras llega el proveedor de manejo de plagas."],
+        ["ZONA COMUN", "IIT", "AUTOMATIZACION", "SISTEMA DE CCTV", "CAMARAS INOPERATIVAS", "1 reportar novedad a la central de operaciones <br>2 la central hace el respectivo reporte al coordinador de automatizacion<br>3 si no se puede solucionar reportar al contratista encargado (IFD)"]
+    ];
+
+    const sinonimos = {
+        "robo": "HURTO", "hurto": "HURTO", "asalto": "HURTO", "atraco": "HURTO",
+        "pelea": "RIÑA", "discusion": "RIÑA", "altercado": "RIÑA",
+        "golpes": "LESIONES", "herida": "LESIONES", "caida": "LESIONES",
+        "fuego": "INCENDIO", "quemar": "INCENDIO",
+        "explosion": "EXPLOSIVOS", "bomba": "EXPLOSIVOS",
+        "acoso": "ACOSO SEXUAL", "vandalismo": "DAÑO EN BIEN AJENO",
+        "drogas": "CONSUMO DE SUSTANCIAS PSICOACTIVAS", "alcohol": "CONSUMO DE SUSTANCIAS PSICOACTIVAS",
+        "mascota": "MASCOTAS", "perro": "MASCOTAS", "animal": "MASCOTAS",
+        "choque": "ACCIDENTE DE TRANSITO", "colision": "ACCIDENTE DE TRANSITO"
+    };
+
+    let resultadosActuales = [];
+
+    function buscar() {
+        const termino = document.getElementById('buscador').value.trim().toLowerCase();
+        const resultadosDiv = document.getElementById('resultados');
+        const countSpan = document.getElementById('result-count');
+
+        if (termino === '') {
+            resultadosDiv.innerHTML = '<div class="no-result">🔎 Ingresa un término para buscar (ej: robo, incendio, pelea, gas...)</div>';
+            countSpan.innerHTML = '⚡ Esperando búsqueda';
+            resultadosActuales = [];
+            return;
+        }
+
+        let terminosBusqueda = new Set([termino]);
+        if (sinonimos[termino]) terminosBusqueda.add(sinonimos[termino].toLowerCase());
+        for (let [sinonimo, tipo] of Object.entries(sinonimos)) {
+            if (tipo.toLowerCase() === termino) terminosBusqueda.add(sinonimo.toLowerCase());
+        }
+
+        const resultados = datosExcel.filter(fila => {
+            const textoCompleto = `${fila[0]} ${fila[2]} ${fila[3]} ${fila[4]} ${fila[5]}`.toLowerCase();
+            for (let t of terminosBusqueda) {
+                if (textoCompleto.includes(t)) return true;
+            }
+            return false;
+        });
+
+        resultadosActuales = resultados;
+
+        if (resultados.length === 0) {
+            resultadosDiv.innerHTML = `<div class="no-result">😕 No se encontraron resultados para "${termino}".<br>Prueba con: robo, incendio, pelea, caida, policia, fuga, etc.</div>`;
+            countSpan.innerHTML = `📋 Mostrando <strong>0</strong> resultados`;
+        } else {
+            let html = ` <table> <thead> <tr> <th>Sub Área</th> <th>Tipo de Novedad</th> </tr> </thead> <tbody>`;
+            resultados.forEach((fila, idx) => {
+                let tipoResaltado = fila[3];
+                terminosBusqueda.forEach(term => {
+                    if (term.length > 2) {
+                        const regex = new RegExp(`(${term})`, 'gi');
+                        tipoResaltado = tipoResaltado.replace(regex, '<span class="highlight">$1</span>');
+                    }
+                });
+                html += `<tr class="clickable-row" data-index="${idx}">
+                            <td class="subarea-text">${fila[2] || '-'}</td>
+                            <td><span class="tipo-novedad-badge">${tipoResaltado}</span></td>
+                          </tr>`;
+            });
+            html += `</tbody> </table>`;
+            resultadosDiv.innerHTML = html;
+            countSpan.innerHTML = `📋 Mostrando <strong>${resultados.length}</strong> resultado${resultados.length !== 1 ? 's' : ''}`;
+            
+            document.querySelectorAll('.clickable-row').forEach(row => {
+                row.addEventListener('click', (e) => {
+                    const idx = row.getAttribute('data-index');
+                    if (idx !== null) mostrarModal(parseInt(idx));
+                });
+            });
+        }
+    }
+
+    function mostrarModal(index) {
+        const fila = resultadosActuales[index];
+        if (!fila) return;
         
-        // Datos originales con formato 
-        const rawData = [
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "MECHERO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "ENGAÑO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "COSQUILLEO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "FACTOR OPORTUNIDAD" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "ATRACO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "FLETEO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIO", sub_novedad: "AGRESION CON ARMA BLANCA" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIO", sub_novedad: "AGRESION CON ARMA DE FUEGO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUICIDIO", sub_novedad: "INTENTO DE SUICIDIO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CRISIS EMOCIONALES", sub_novedad: "COMPORTAMIENTOS INUSUALES DE VISITANTES/EMPLEADOS" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIÑA", sub_novedad: "FISICA" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIÑA", sub_novedad: "VERBAL" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES", sub_novedad: "FISICAS" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES", sub_novedad: "GOLPES CON OBJETOS" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES", sub_novedad: "QUEMADURAS" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES", sub_novedad: "CORTES" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES", sub_novedad: "CAIDAS" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES", sub_novedad: "CAUSADAS POR ANIMALES" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "DAÑO EN BIEN AJENO", sub_novedad: "VANDALISMO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "DAÑO EN BIEN AJENO", sub_novedad: "DAÑO EN BIENES E INMUEBLES" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "DAÑO EN BIEN AJENO", sub_novedad: "GRAFITI" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad: "SUPLANTACION DE IDENTIDAD" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad: "USO DE DOCUMENTACION FALSA" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad: "ACCESO NO AUTORIZADO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSENOS", sub_novedad: "EXHIBICIONISMO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSENOS", sub_novedad: "ACOSO SEXUAL" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSENOS", sub_novedad: "RELACIONES SEXUALES" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONSUMO DE SUSTANCIAS PSICOACTIVAS", sub_novedad: "ALCOHOL" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONSUMO DE SUSTANCIAS PSICOACTIVAS", sub_novedad: "DROGAS Y/O SUSTANCIAS ALUCINOGENAS" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONSUMO DE SUSTANCIAS PSICOACTIVAS", sub_novedad: "CIGARRILOS O VAPIADORES" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "AMPAROS POLICIVOS", sub_novedad: "ORDENES DE RESTRICCION" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "AMPAROS POLICIVOS", sub_novedad: "CONFLICTOS LEGALES O ADMINISTRATIVOS" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "AMPAROS POLICIVOS", sub_novedad: "DISPUTAS PERSONALES AL INTERIOR DE LAS MARCAS" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES EN MARCAS", sub_novedad: "CAIDAS DE ALTURA" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES EN MARCAS", sub_novedad: "ELECTROCUCIÓN" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES EN MARCAS", sub_novedad: "ATRAPAMIENTO EN TRANSPORTE VERTICAL" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES EN MARCAS", sub_novedad: "GOLPES O CAIDAS DE OBJETOS" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES EN MARCAS", sub_novedad: "QUEMADURAS" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES EN MARCAS", sub_novedad: "LESIONES CON UTENSILIOS CORTOPUNZANTES" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXTORCION", sub_novedad: "EXIGENCIA DE DINERO O INFORMACION" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTRUSION", sub_novedad: "INGRESO NO AUTORIZADO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTRUSION", sub_novedad: "INGRESO FORZOSO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "PAQUETE SOSPECHOSO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "AMENAZA DE BOMBA" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "MATERIAL EXPLOSIVO" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "PISOS MOJADOS" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "FALTA DE ILUMINACION" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "OBSTACULOS EN RUTAS DE EVACUACION" },
-            { zona: "MARCA", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "INFRAESTRUCTURA CON RIESGO DE CAIDA" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN LA RED ELECTRICA EN EL LOCAL", sub_novedad: "AUSENCIA TOTAL DE ENERGIA" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN LA RED ELECTRICA EN EL LOCAL", sub_novedad: "SOBRECALENTAMIENTO DE CABLES" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN LA RED ELECTRICA EN EL LOCAL", sub_novedad: "DAÑO DE EQUIPOS ELECTRICOS POR MICROCORTE" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "CORTE DE ENERGIA POR EL OPERADOR DE RED", sub_novedad: "FALLO EN SUMINISTRO PRINCIPAL" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "CORTE DE ENERGIA POR EL OPERADOR DE RED", sub_novedad: "MANTENIMIENTO NO PROGRAMADO" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "CORTE DE ENERGIA POR EL OPERADOR DE RED", sub_novedad: "MANTENIMIENTO PROGRAMADO POR EL OPERADOR" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "RUPTURA O FALLA EN TUBERIAS", sub_novedad: "TUBERIAS DE AGUAS LLUVIAS, SANITARIAS" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "RUPTURA O FALLA EN TUBERIAS", sub_novedad: "RED DE AGUA POTABLE LOCALES" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "FUGA DE GAS", sub_novedad: "FUGA DE GAS DENTRO DE LA MARCA" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "FUGA DE GAS", sub_novedad: "FUGA DE GAS EN NICHO DE MEDIDORES" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "INCENDIO", sub_novedad: "FUEGO INCIPIENTE" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "CORTE DE AGUA POR LA EMPRESA DE ACUEDUCTO", sub_novedad: "VALVULAS PRINCIPALES CERRADAS" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "CORTE DE GAS POR COMERCIALIZADOR DE GAS", sub_novedad: "CORTE DE AGUA POR NO PAGO DE SERVICIO" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "TAPONAMIENTO DE TUBERIAS SANITARIAS", sub_novedad: "TAPONAMIENTO CON AFECTACION A UNICA MARCA" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "FILTRACIONES POR PLACA", sub_novedad: "FILTRACION DE PLACA CON AFECTACION EN INFRAESTRUCTURA Y EQUIPOS" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "FILTRACIONES POR PLACA", sub_novedad: "FILTRACION DE PLACA SIN AFECTACION DE INFRAESTRUCTURA Y EQUIPOS" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad: "RIESGO DE CAIDA POR FALLAS ESTRUCTURALES" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad: "DESNIVELES SIN SEÑALIZACION" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad: "RIESGO DE CAIDAS POR FALLAS NO ESTRUCTURALES" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "FALLA EN REJAS Y PUERTAS DE INGRESO A LA MARCA", sub_novedad: "CERRADURAS DEFECTUOSAS" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "FALLA EN REJAS Y PUERTAS DE INGRESO A LA MARCA", sub_novedad: "DEFORMACION POR USO" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "FALLA EN REJAS Y PUERTAS DE INGRESO A LA MARCA", sub_novedad: "REJAS SIN ENERGIA O BLOQUEADAS" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "RUPTURA DE TOBERIAS DE AIRE ACONDICIONADO", sub_novedad: "RUPTURA DE TUBERIA AGUA ARRIBA DE LA VALVULA PRINCIPAL DEL LOCAL" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "RUPTURA DE TOBERIAS DE AIRE ACONDICIONADO", sub_novedad: "RUPTURA DE TUBERIA AGUAS ABAJO DE LA VALVULA PRINCIPAL DEL LOCAL" },
-            { zona: "MARCA", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "FALLA EN SUMINISTRO DE AGUA EN TORRE DE ENFRIAMIENTO", sub_novedad: "OBSTRUCCION EN TUBERIA O DAÑO DE VALVULAS" },
-            { zona: "MARCA", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "ALARMA PANEL INCENDIO", sub_novedad: "" },
-            { zona: "MARCA", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "ALARMA PRIORITARIA PANEL", sub_novedad: "SENSOR TERMICO ACTIVADO" },
-            { zona: "MARCA", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "ALARMA PRIORITARIA PANEL", sub_novedad: "SENSOR DE HUMO ACTIVADO" },
-            { zona: "MARCA", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "PARQUEADERO PARA MARCA", sub_novedad: "SOLICITUD DE PARQUEADERO PARA MARCA" },
-            { zona: "MARCA", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "VALIDADORAS DE ESTACIONAMIENTO", sub_novedad: "VALIDADORA NO ENCIENDE" },
-            { zona: "MARCA", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "AUTORIZACION DE INGRESO AL ESTACIONAMIENTO", sub_novedad: "" },
-            { zona: "MARCA", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "COMUNICACIONES", sub_novedad: "" },
-            { zona: "MARCA", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "AUTORIZACIONES PLATAFORMAS MANTUM", sub_novedad: "" },
-            { zona: "MARCA", direccion: "IIT", sub_area: "INFORMATICA", tipo_novedad: "INGRESO A LA PLATAFORMA DE MANTUM", sub_novedad: "" },
-            { zona: "MARCA", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "AVISTAMIENTO DE ANIMALES SILVESTRES (SARIGUELLAS, ARDILLAS, COMADREJAS, TINGUAS)", sub_novedad: "" },
-            { zona: "MARCA", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "AVISTAMIENTO DE (ABEJAS O AVISPAS)", sub_novedad: "" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "MECHERO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "ENGAÑO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "COSQUILLEO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "FACTOR OPORTUNIDAD" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "ATRACO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "FLETEO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad: "CREDENCIALES FALSAS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad: "SUPLANTACION DE VISITANTES" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad: "SUPLANTACION DE FUNCIONARIOS PUBLICOS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIÑA", sub_novedad: "PELEA FISICA" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIÑA", sub_novedad: "ALTERCADO VERBAL" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSENOS", sub_novedad: "ACOSO SEXUAL" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSENOS", sub_novedad: "EXHIBICIONISMO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSENOS", sub_novedad: "COMPORTAMIENTO INAPROPIADO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "MASCOTAS", sub_novedad: "ANIMALES SUELTOS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "MASCOTAS", sub_novedad: "AGRESIONES A MASCOTAS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "MASCOTAS", sub_novedad: "DAÑOS CAUSADOS POR MASCOTAS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "MASCOTAS", sub_novedad: "ACCIDENTES CON MASCOTAS (LESION O MUERTE)" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIESGOS DE CAIDAS", sub_novedad: "PISOS RESBALOSOS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIESGOS DE CAIDAS", sub_novedad: "ESCALERAS SIN MANTENIMIENTO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIESGOS DE CAIDAS", sub_novedad: "DESNIVELES PELIGROSOS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "NO PAGO DE TARIFAS", sub_novedad: "EVASION DE PAGO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "NO PAGO DE TARIFAS", sub_novedad: "NOVEDADES EN PUNTOS DE PAGO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "NO PAGO DE TARIFAS", sub_novedad: "FALLAS EN SISTEMA DE COBRO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIOS", sub_novedad: "AGRESION CON ARMA BLANCA" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIOS", sub_novedad: "AGRESION CON ARMA DE FUEGO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIOS", sub_novedad: "VIOLENCIA EXTREMA" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONSUMO DE SUSTANCIAS PSICOACTIVAS", sub_novedad: "ALCOHOL" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONSUMO DE SUSTANCIAS PSICOACTIVAS  (BAÑO)", sub_novedad: "DROGAS Y/O SUSTANCIAS ALUCINOGENAS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONSUMO DE SUSTANCIAS PSICOACTIVAS", sub_novedad: "CIGARRILOS O VAPIADORES" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTOXICACION", sub_novedad: "INTOXICACION ALIMENTARIA" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTOXICACION", sub_novedad: "EXPOSICION A QUIMICOS RESOLUCION 773" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTOXICACION", sub_novedad: "CONSUMO DE SUSTANCIAS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSENOS", sub_novedad: "RELACIONES SEXUALES" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXTORCION", sub_novedad: "EXIGENCIA DE DINERO O INFORMACION" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad: "MENORES EXTRAVIADOS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad: "ADULTOS DESORIENTADOS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad: "PERSONAS DESAPARECIDAS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "DAÑO EN BIEN AJENO", sub_novedad: "VANDALISMO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "DAÑO EN BIEN AJENO", sub_novedad: "DAÑO EN BIENES E INMUEBLES" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "DAÑO EN BIEN AJENO", sub_novedad: "GRAFITI" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUICIDIO", sub_novedad: "INTENTO DE SUICIDIO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CRISIS EMOCIONALES", sub_novedad: "COMPORTAMIENTOS INUSUALES DE VISITANTES" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTRUSION", sub_novedad: "INGRESO NO AUTORIZADO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTRUSION", sub_novedad: "INGRESO FORZOSO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "PAQUETE SOSPECHOSO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "AMENAZA DE BOMBA" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "MATERIAL EXPLOSIVO" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "FALTA DE SEÑALIZACION" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "EQUIPOS DAÑADOS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "RIESGOS ELECTRICOS" },
-            { zona: "ZONA COMUN", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "INFRAESTRUCTURA CON RIESGO DE CAIDA" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN ILUMINACION MALL", sub_novedad: "INTERMITENCIA O DAÑO EN LUCES DE LOS PASILLOS Y MALL" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN PUNTOS FIJOS", sub_novedad: "FALLA EN TABLERO ELECTRICO EN SERVICIOS GENERALES" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN BAJA TENSION", sub_novedad: "FALLA ELECTRICA EN CIRCUITOS NO REGULADOS" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN UPS DE CENTRAL OPERACIONES Y DATACENTER", sub_novedad: "FALLA ELECTRICA DE UPS CENTRAL DE OPERACIONES" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN SUMINISTRO DE ENERGIA A STANDS", sub_novedad: "FALLA ELECTRICA EN UN SOLO STAND" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "CABLES ELECTRICOS EXPUESTOS", sub_novedad: "CABLES ELECTRICOS EXPUESTOS EN CAJAS DE PISO" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "RUPTURA O FALLA EN TUBERIAS (TUBERIAS DE AGUAS LLUVIAS, SANITARIAS, POTABLES Y RED CONTRAINCENDIOS)", sub_novedad: "TUBERIAS DE AGUAS LLUVIAS, SANITARIAS" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "RUPTURA O FALLA EN TUBERIAS (TUBERIAS DE AGUAS LLUVIAS, SANITARIAS, POTABLES Y RED CONTRAINCENDIOS)", sub_novedad: "RED DE AGUA POTABLE ZONA COMUN" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "RUPTURA O FALLA EN TUBERIAS (TUBERIAS DE AGUAS LLUVIAS, SANITARIAS, POTABLES Y RED CONTRAINCENDIOS)", sub_novedad: "RED CONTRAINCENDIOS" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "FUGA DE GAS EN ZONA COMUN", sub_novedad: "FUGA DE GAS DENTRO DEL MALL" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "FUGA DE GAS EN ZONA COMUN", sub_novedad: "FUGA DE GAS EN CUBIERTA" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad: "RIESGO DE CAIDA POR FALLAS ESTRUCTURALES" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad: "RIESGO DE CAIDAS POR FALLAS NO ESTRUCTURALES" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad: "RIESGO DE CAIDA POR FALLAS NO ESTRUCTURALES" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "DAÑO DE INFRAESTRUCTURA POR VISITANTES Y/O PROVEEDORES", sub_novedad: "DAÑOS LOCATIVOS CAUSADOS POR PROVEEDORES Y/O VISITANTES" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "DAÑO DE INFRAESTRUCTURA POR VISITANTES Y/O PROVEEDORES", sub_novedad: "DAÑOS EN EQUIPOS CAUSADOS POR VISITANTES Y/O PROVEEDORES" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "ATRAPAMIENTO DE PERSONAS EN ASCENSORES", sub_novedad: "ATRAPAMIENTO DE PERSONAS EN ASCENSOR DE CARGA" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "ATRAPAMIENTO DE PERSONAS EN ASCENSORES", sub_novedad: "ATRAPAMIENTO DE PERSONAS EN ASCENSOR PANORAMICO" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "ATRAPAMIENTO DE ELEMENTOS EN ESCALERAS", sub_novedad: "ATRAPAMIENTO DE PRENDAS DE VESTIR" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "ATRAPAMIENTO DE ELEMENTOS EN ESCALERAS", sub_novedad: "ATRAPAMIENTO DE ACCESORIOS, PAQUETES Y OTROS ELEMENTOS" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "FALLA DE EXTRACTORES EN BAÑOS", sub_novedad: "FALLA DE EXTRACTORES EN BAÑOS" },
-            { zona: "ZONA COMUN", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "BLOQUEO DE PUERTAS AUTOMATICAS Y REJAS", sub_novedad: "BLOQUEO DE PUERTAS AUTOMATICAS" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "RGB", sub_novedad: "FALLA EN ILUMINACION RGB, SECTORES CON COLORES DISTORSIONADOS" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "SISTEMA DE CCTV", sub_novedad: "CAMARAS INOPERATIVAS" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "ALARMA PRIORITARIA PANEL", sub_novedad: "ESTACIONES MANUALES ACTIVAS" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "ALARMA PRIORITARIA PANEL", sub_novedad: "SENSOR DE HUMO ACTIVADO" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "SISTEMA DE CCTV", sub_novedad: "CÁMARAS INOPERATIVAS" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "PUNTOS DE PAGO", sub_novedad: "TOTEMS DE PAGO NO RECONOCEN TARJETAS" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "PUNTOS DE PAGO", sub_novedad: "TOTEMS DE PAGO TARJETAS ATASCADAS" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "DETECCION DE INCENDIO", sub_novedad: "SENSORES DISPARAN FALSAS ALARMAS" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "DATACENTER", sub_novedad: "DATACENTER" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "SONIDO", sub_novedad: "ALTAVOCES DAÑADOS" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "TOTEMS ENCUENTRA A TU VEHICULO", sub_novedad: "PANTALLA TACTIL NO RESPONDE" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "TOTEMS ENCUENTRA A TU VEHICULO", sub_novedad: "TOTEMS APAGADOS O FUERA DE APLICACIÓN" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "VALIDADORAS DE ESTACIONAMIENTO", sub_novedad: "VALIDADORAS DE ESTACIONAMIENTO" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "VALIDADORAS DE ESTACIONAMIENTO", sub_novedad: "VALIDADORA NO ENCIENDE" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "PUERTAS DE EMERGENCIAS", sub_novedad: "NO SE DESBLOQUEA AUTOMATICAMENTE" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "PUERTAS DE EMERGENCIAS", sub_novedad: "PUERTA EN APERTURA" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "PUERTAS DE EMERGENCIAS", sub_novedad: "PUERTA NO REPORTA" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "CONTROL DE ACCESO", sub_novedad: "NO LEE LA HUELLA CORRECTAMENTE" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "COMUNICACIÓN TELEFONICA", sub_novedad: "COMUNICACIÓN TELEFONICA" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "INTERNET", sub_novedad: "INTERNET" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "PANTALLAS", sub_novedad: "PANTALLAS" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "SWITCHES DE RED", sub_novedad: "SOBRECALENTADO" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "SWITCHES DE RED", sub_novedad: "VENTILADORES OBSTRUIDOS" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "EQUIPOS DE COMPUTO", sub_novedad: "EQUIPOS DE COMPUTO" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "DATACENTER", sub_novedad: "TEMPERATURA CRITICA EN RACK SERVIDORES" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "AUTORIZACIONES PLATAFORMA MANTUM", sub_novedad: "" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "INFORMATICA", tipo_novedad: "PLATAFORMA MANTUM", sub_novedad: "CAIDA DEL APLICATIVO" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "INFORMATICA", tipo_novedad: "PLATAFORMA ADCI", sub_novedad: "ERROR DEL SERVIDOR" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "INFORMATICA", tipo_novedad: "LA INTRANET", sub_novedad: "" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "INFORMATICA", tipo_novedad: "LICENCIAS DE CORREO", sub_novedad: "LICENCIAS EXPIRADAS" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "INFORMATICA", tipo_novedad: "LICENCIAS DE CORREO", sub_novedad: "FALTA DE LICENCIAS" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "INFORMATICA", tipo_novedad: "SERVIDORES EN LA NUBE", sub_novedad: "ALMACENAMIENTO LLENO" },
-            { zona: "ZONA COMUN", direccion: "IIT", sub_area: "INFORMATICA", tipo_novedad: "ANTIVIRUS", sub_novedad: "ACTUALIZACION FALLIDA EN ESTACIONES DE TRABAJO" },
-            { zona: "ZONA COMUN", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "CONTENEDORES DE RECICLAJE INSUFICIENTES O MAL UTILIZADOS.", sub_novedad: "" },
-            { zona: "ZONA COMUN", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "ACUMULACIÓN DE RESIDUOS EN ÁREAS DE DESCANSO", sub_novedad: "" },
-            { zona: "ZONA COMUN", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "MALOS OLORES POR FALTA DE LIMPIEZA EN BAÑOS Y ÁREAS DE COMIDA.", sub_novedad: "" },
-            { zona: "ZONA COMUN", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "USO EXCESIVO DE PRODUCTOS QUÍMICOS DE LIMPIEZA QUE", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "ROBO DE AUTOPARTES" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "HURTO DE OBJETOS DENTRO DEL VEHICULO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "HURTO DE VEHICULO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTE DE TRANSITO", sub_novedad: "COLISION ENTRE VEHICULOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTE DE TRANSITO", sub_novedad: "ATROPELLO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTE DE TRANSITO", sub_novedad: "CHOQUE CONTRA ESTRUCTURAS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONGESTION VEHICULAR", sub_novedad: "BLOQUEOS POR VEHICULOS MAL ESTACIONADOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONGESTION VEHICULAR", sub_novedad: "ALTA AFLUENCIA" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONGESTION VEHICULAR", sub_novedad: "DAÑO SISTEMA DE TALAQUERAS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONGESTION VEHICULAR", sub_novedad: "VIAS ALTERNAS AL CENTRO COMERCIAL" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad: "USO DE TICKETS FALSOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad: "SUPLANTACION EN ACCESOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUPLANTACION", sub_novedad: "FRAUDE EN PAGOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIÑA", sub_novedad: "PELEA ENTRE CONDUCTORES" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIÑA", sub_novedad: "DISCUSION POR ESTACIONAMIENTO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIÑA", sub_novedad: "AGRESION VERBAL" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSENOS", sub_novedad: "EXHIBICIONISMO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSENOS", sub_novedad: "ACOSO EN VEHICULOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSENOS", sub_novedad: "ACTOS SEXUALES" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "MASCOTAS", sub_novedad: "ANIMALES ABANDONADOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "MASCOTAS", sub_novedad: "MASCOTAS ENCERRADAS EN VEHICULOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIESGOS DE CAIDAS", sub_novedad: "PISOS RESBALOSOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIESGOS DE CAIDAS", sub_novedad: "HUECOS EN PAVIMENTOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIESGOS DE CAIDAS", sub_novedad: "ILUMINACION DEFICIENTE" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIESGOS DE CAIDAS", sub_novedad: "CAIDAS DE OBJETOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "NO PAGO DE TARIFAS", sub_novedad: "EVASION DE PAGO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "NO PAGO DE TARIFAS", sub_novedad: "CONFLICTOS EN CAJA" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "NO PAGO DE TARIFAS", sub_novedad: "FALLAS EN SISTEMAS DE COBRO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES", sub_novedad: "CAIDAS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES", sub_novedad: "ELECTROCUCION" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES", sub_novedad: "ATRAPAMIENTO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES", sub_novedad: "GOLPES O CAIDAS DE OBJETOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACCIDENTES LABORALES", sub_novedad: "QUEMADURAS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIOS", sub_novedad: "AGRESION CON ARMA BLANCA" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIOS", sub_novedad: "AGRESION CON ARMA DE FUEGO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIOS", sub_novedad: "VIOLENCIA EXTREMA" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUSTANCIAS PSICOACTIVAS", sub_novedad: "DROGAS EN VEHICULOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTOXICACION", sub_novedad: "INTOXICACION POR MONOXIDO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTOXICACION", sub_novedad: "EXPOSICION A QUIMICOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTOXICACION", sub_novedad: "CONSUMO DE SUSTANCIAS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACOSO", sub_novedad: "ACOSO SEXUAL" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACOSO", sub_novedad: "ACOSO LABORAL" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACOSO", sub_novedad: "ACOSO PSICOLOGICO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXTORCION", sub_novedad: "AMENAZAS A USUARIOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXTORCION", sub_novedad: "COBRO ILEGAL POR ESTACIONAMIENTO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES PRODUCIDAS POR MASCOTAS", sub_novedad: "MORDEDURAS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "LESIONES PRODUCIDAS POR MASCOTAS", sub_novedad: "ARAÑAZOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad: "MENORES EXTRAVIADOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad: "ADULTOS DESORIENTADOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad: "PERSONAS DESAPARECIDAS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "SUICIDIO", sub_novedad: "INTENTO DE SUICIDIO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CRISIS EMOCIONALES", sub_novedad: "COMPORTAMIENTOS INUSUALES DE VISITANTES" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTRUSION", sub_novedad: "INGRESO NO AUTORIZADO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTRUSION", sub_novedad: "VIOLACION DE PERIMETRO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "PAQUETE SOSPECHOSO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "AMENAZA DE BOMBA" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "MATERIAL EXPLOSIVO" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOCION", sub_novedad: "EXPLOCION POR EQUIPOS DEL CENTRO COMERCIAL" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "FALTA DE SEÑALIZACION" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "EQUIPOS DAÑADOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "RIESGOS ELECTRICOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "CAIDA DE ELEMENTOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN MEDIA TENSION Y/O BAJA TENSION", sub_novedad: "FALLA ELECTRICA EN CIRCUITOS NO REGULADOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN UPS PARA PUNTOS DE PAGO Y TALANQUERAS", sub_novedad: "FALLA ELECTRICA DE CIRCUITO REGULADO DE UPS EN PUNTOS DE PAGO" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN ILUMINACION DE SOTANOS", sub_novedad: "INTERMITENCIA O DAÑO EN LUCES DE SOTANOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN PUNTOS FIJOS", sub_novedad: "FALLA EN TABLERO ELECTRICO EN SERVICIOS GENERALES" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA ELECTRICA EN PUNTOS FIJOS", sub_novedad: "FALLA EN TABLERO ELECTRICO DE CIRCUITO DE FUERZA" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA DE ENERGIA EN CENTRAL DE ESTACIONAMIENTO", sub_novedad: "FALLA ELECTRICA DE CIRCUITO REGULADO DE UPS EN CENTRAL DE ESTACIONAMIENTO" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA DE ENERGIA EN CENTRAL DE ESTACIONAMIENTO", sub_novedad: "FALLA ELECTRICA EN CIRCUITO NO REGULADO" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "BLOQUEO DE TRANSFERENCIAS ELECTRICAS", sub_novedad: "BLOQUEO DE TRANSFERENCIAS ELECTRICAS" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN ARRANQUE DE PLANTAS ELECTRICAS", sub_novedad: "FALLA DE ARRANQUE POR SISTEMA ELECTRICO" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN ARRANQUE DE PLANTAS ELECTRICAS", sub_novedad: "FALLA DE ARRANQUE POR SISTEMA MECANICO" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "ABASTECIMIENTO INSUFICIENTE DE ACPM PARA LAS PLANTAS ELECTRICAS", sub_novedad: "DESOCUPADO DE TANQUES DE ALMACENAMIENTO DE ACPM A NIVELES CRITICOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "CABLES ELECTRICOS EXPUESTOS", sub_novedad: "CABLES ELECTRICOS EXPUESTOS EN TECHOS DE SOTANOS" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "RUPTURA O FALLA EN TUBERIAS (TUBERIAS DE AGUAS LLUVIAS, SANITARIAS, POTABLES Y RED CONTRAINCENDIOS)", sub_novedad: "RUPTURA O FALLA EN TUBERIA DE AGUA LLUVIAS O SANITARIAS" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "RUPTURA O FALLA EN TUBERIAS (TUBERIAS DE AGUAS LLUVIAS, SANITARIAS, POTABLES Y RED CONTRAINCENDIOS)", sub_novedad: "RUPTURA EN TUBERIAS DE AGUA POTABLES" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "RUPTURA O FALLA EN TUBERIAS (TUBERIAS DE AGUAS LLUVIAS, SANITARIAS, POTABLES Y RED CONTRAINCENDIOS)", sub_novedad: "RUPTURA EN TUBERIAS DE RED CONTRAINCENDIO" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "TAPONAMIENTO DE TUBERIAS", sub_novedad: "TAPÓNAMIENTO DE TUBERIAS DE AGUAS GRASAS Y NEGRAS" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "FALLA EN EQUIPOS DE PRESION DE SUMINISTRO DE AGUA POTABLES", sub_novedad: "FALLA EN EQUIPOS DE PRESION DE SUMINISTRO DE AGUA POTABLES" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "AUSENCIA DE SUMINISTRO DE AGUA A LOS TANQUES DE ALMACENAMIENTO", sub_novedad: "AUSENCIA DE SUMINISTRO DE AGUA A LOS TANQUES DE ALMACENAMIENTO" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "INCENDIO", sub_novedad: "FUEGO INCIPIENTE" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "INCENDIO", sub_novedad: "FUEGO DECLARADO" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "COLAPSO DE POZOS EYECTORES", sub_novedad: "FALLA EN EQUIPO DE BOMBEO DE POZOS EYECTORES DE SISTEMA ELECTRICO Y / O MECANICO" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "FUGA DE GAS", sub_novedad: "FUGA DE GAS EN TUBERIAS PRINCIPALES DE SOTANO" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad: "RIESGO DE CAIDA POR FALLAS ESTRUCTURALES" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad: "RIESGO DE CAIDA POR FALLAS NO ESTRUCTURALES" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "FILTRACIONES DE AGUA POR PANTALLAS", sub_novedad: "FILTRACIONES DE AGUA POR PANTALLAS" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "DAÑO DE INFRAESTRUCTURA POR VISITANTES O PROVEEDORES", sub_novedad: "DAÑO DE INFRAESTRUCTURA POR VISITANTES O PROVEEDORES" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "FALLA EN EQUIPOS DE SUMINISTRO Y EXTRACCION DE AIRE", sub_novedad: "FALLA EN EQUIPOS DE SUMINISTRO Y EXTRACCION DE AIRE" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "FALLA EN PUERTAS AUTOMATICAS EN PUNTOS DE PAGO", sub_novedad: "FALLA EN PUERTAS AUTOMATICAS EN PUNTOS DE PAGO" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "FALLA EN APERTURA Y CIERRE DE REJAS ELECTRICAS", sub_novedad: "FALLA EN SISTEMA ELECTROMECANICO" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "FALLA EN APERTURA Y CIERRE DE REJAS ELECTRICAS", sub_novedad: "FALLA EN SISTEMA DE CONTROL" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "FALLA EN COMPACTADORAS", sub_novedad: "FALLA EN COMPACTADORAS" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "FALLA EN MALACATE", sub_novedad: "FALLA EN MALACATE" },
-            { zona: "ESTACIONAMIENTO", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "FALLA DE REFIGERACION EN CUARTO FRIO", sub_novedad: "FALLA DE REFIGERACION EN CUARTO FRIO" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "SISTEMA DE CCTV", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "SISTEMA DE GUIADO", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "SISTEMA DE INGRESO", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "SISTEMA DE SALIDA", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "SISTEMA DE SALIDA", sub_novedad: "SISTEMA SUSPENDIDO" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "SISTEMA DE SALIDA", sub_novedad: "CAIDA PAGINA DE LA DIAN" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "PUNTOS DE PAGO", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "TALANQUERAS", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "GOPASS", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "DETECCION DE INCENDIO", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "DATACENTER", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "SONIDO", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "PLATAFORMA DE ESTACIONAMIENTO", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "VALIDADORAS DE ESTACIONAMIENTO", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "COMUNICACIONES", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "PANTALLAS", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "EQUIPOS DE COMPUTO", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "DATACENTER", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "SISTEMA TELEFONICO", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "AUTORIZACIONES PLATAFORMA MANTUM", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "INFORMATICA", tipo_novedad: "PLATAFORMA MANTUM", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "IIT", sub_area: "INFORMATICA", tipo_novedad: "LICENCIAS DE CORREO", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "FALTA DE SEÑALIZACIÓN CLARA PARA ZONAS DE RECICLAJE O ESTACIONAMIENTO SOSTENIBLE.", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "DERRAMES DE ACEITES O COMBUSTIBLES QUE CONTAMINAN EL SUELO.", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "ESPACIOS DE ESTACIONAMIENTO MAL VENTILADOS, ACUMULANDO GASES CONTAMINANTES.", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "CONTAMINACIÓN POR EMISIONES DE VEHÍCULOS Y DERRAMES DE LÍQUIDOS.", sub_novedad: "" },
-            { zona: "ESTACIONAMIENTO", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "ACUMULACIÓN DE RESIDUOS CENTRO DE ACOPIO ESTACIONAMIENTO", sub_novedad: "" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "ATRACO A TRASEUNTES" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "HURTO DE VEHICULOS" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HURTO", sub_novedad: "HURTO DE ELEMENTOS PERTENECIENTES AL CENTRO COMERCIAL" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONGESTION VEHICULAR", sub_novedad: "BLOQUEO POR VEHICULOS MAL ESTACIONADOS" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONGESTION VEHICULAR", sub_novedad: "CONGESTION EN VIAS ALTERNAS" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONGESTION VEHICULAR", sub_novedad: "ALTA AFLUENCIA" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIÑA", sub_novedad: "PELEA ENTRE PERSONAS" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSENOS", sub_novedad: "EXHIBICIONISMO" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSENOS", sub_novedad: "ACOSO SEXUAL" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "ACTOS OBSENOS", sub_novedad: "COMPORTAMIENTO INAPROPIADO" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "MASCOTAS", sub_novedad: "MALTRATO A ANIMALES" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIESGOS DE CAIDAS", sub_novedad: "PAVIMENTO EN MAL ESTADO" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIESGOS DE CAIDAS", sub_novedad: "DESNIVELES PELIGROSOS" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "RIESGOS DE CAIDAS", sub_novedad: "OBSTACULOS EN VIAS" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIOS", sub_novedad: "AGRESION CON ARMA" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "HOMICIDIOS", sub_novedad: "VIOLENCIA EXTREMA" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONSUMO DE SUSTANCIAS", sub_novedad: "DROGAS EN AREAS PUBLICAS" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTOXICACION", sub_novedad: "CONSUMO DE SUSTANCIAS" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad: "MENORES EXTRAVIADOS" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad: "ADULTOS DESORIENTADOS" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "PERDIDA DE MENORES Y ADULTO MAYOR", sub_novedad: "PERSONAS DESAPARECIDAS" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CRISIS EMOCIONAL", sub_novedad: "CRISIS EMOCIONAL" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTRUSION", sub_novedad: "INGRESO NO AUTORIZADO" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "INTRUSION", sub_novedad: "VIOLACION DE PERIMETRO" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "PAQUETE SOSPECHOSO" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "AMENAZA DE BOMBA" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "EXPLOSIVOS", sub_novedad: "MATERIAL EXPLOSIVO" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "VEHICULOS", sub_novedad: "ABANDONO DE VEHICULO" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "FALTA DE SEÑALIZACION" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "ILUMINACION DEFICIENTE" },
-            { zona: "PERIMETRO", direccion: "SEGURIDAD", sub_area: "SEGURIDAD", tipo_novedad: "CONDICIONES INSEGURAS", sub_novedad: "RIESGOS ESTRUCTURALES" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN ILUMINACION PERIMETRAL", sub_novedad: "FALLA POR DAÑO EN SISTEMA DE CABLEADO DE ILUMINACION" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "FALLA EN ILUMINACION PERIMETRAL", sub_novedad: "FALLA EN CONTROL DE KNX" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "PERDIDA DE ILUMINACION EN AVISOS DE FACHADA", sub_novedad: "FALLA EN SISTEMA DE ILUMINACION Y DRIVER" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "ELECTRICO", tipo_novedad: "PERDIDA DE ILUMINACION EN AVISOS DE FACHADA", sub_novedad: "FALLA EN SISTEMA ELECTRICO DE ALIMENTACION DE LOS AVISOS" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "TAPONAMIENTO EN TRAMPAS DE GRASA", sub_novedad: "TAPONAMIENTO DE TRAMPAS DE GRASA" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "DAÑO TUBERIAS DE RIEGO", sub_novedad: "DAÑO EN TUBERIAS DE PRESION DE PVC" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "DAÑO TUBERIAS DE RIEGO", sub_novedad: "DAÑO EN MANGUERAS DE DISTRIBUCION DE RIEGO" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "TAPONAMIENTO DE SIFONES DE MUELLES", sub_novedad: "TAPONAMIENTO DE SIFONES DE MUELLES" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "HIDRAULICO", tipo_novedad: "FUGAS DE GAS EN NICHOS", sub_novedad: "FUGAS DE GAS EN NICHOS" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad: "RIESGO DE CAIDA POR FALLAS ESTRUCTURALES DE FACHADA" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", sub_novedad: "RIESGO DE CAIDA POR FALLAS NO ESTRUCTURALES DE FACHADA" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "DESPRENDIMIENTOS DE ADOQUINES", sub_novedad: "DESPRENDIMIENTOS DE ADOQUINES" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "CIVIL", tipo_novedad: "RIESGOS DE CAIDAS DE RAMAS DE ARBOLES", sub_novedad: "RIESGOS DE CAIDAS DE RAMAS DE ARBOLES" },
-            { zona: "PERIMETRO", direccion: "MANTENIMIENTO", sub_area: "ELECTROMECANICO", tipo_novedad: "TAPONAMIENTO DE SIFONES EN REJILLAS DE EXTRACCION", sub_novedad: "TAPONAMIENTO DE SIFONES EN REJILLAS DE EXTRACCION DE MUELLE UNO" },
-            { zona: "PERIMETRO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "CCTV", sub_novedad: "" },
-            { zona: "PERIMETRO", direccion: "IIT", sub_area: "AUTOMATIZACION", tipo_novedad: "PUERTAS DE EMERGENCIA", sub_novedad: "" },
-            { zona: "PERIMETRO", direccion: "IIT", sub_area: "TECNOLOGIA", tipo_novedad: "COMUNICACIONES", sub_novedad: "" },
-            { zona: "PERIMETRO", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "ACUMULACIÓN DE BASURA EN ZONAS EXTERIORES Y PERÍMETROS.", sub_novedad: "" },
-            { zona: "PERIMETRO", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "PRESENCIA DE PLAGAS", sub_novedad: "PRESENCIA DE PLAGAS POR MALA GESTIÓN DE RESIDUOS." },
-            { zona: "PERIMETRO", direccion: "PROYECTOS", sub_area: "AMBIENTAL", tipo_novedad: "ACUMULACIÓN DE AGUA ESTANCADA POR DRENAJES OBSTRUIDOS, GENERANDO FOCOS DE INFECCIÓN.", sub_novedad: "" }
-        ];
+        const subArea = fila[2] || 'No especificada';
+        const tipoNovedad = fila[3] || 'Sin tipo';
+        const subtipo = fila[4] || 'Sin subtipo';
+        const pasos = fila[5] || 'No hay pasos definidos';
+        
+        document.getElementById('modalTipoNovedad').innerHTML = `📌 ${tipoNovedad}`;
+        document.getElementById('modalSubtipo').innerHTML = `<strong>${subtipo}</strong>`;
+        document.getElementById('modalPasosTexto').innerHTML = pasos.replace(/\n/g, '<br>');
+        document.getElementById('modalSubArea').innerHTML = `🔧 Sub Área: ${subArea}`;
+        
+        document.getElementById('modalPasos').classList.add('active');
+    }
+    
+    function cerrarModal() {
+        document.getElementById('modalPasos').classList.remove('active');
+    }
 
-        const data = rawData.map(item => ({
-            "ZONA ": item.zona || "",
-            "DIRECCION": item.direccion || "",
-            "SUB AREA ": item.sub_area || "",
-            "TIPO DE NOVEDAD buscador": item.tipo_novedad || "",
-            "SUB NOVEDAD ": item.sub_novedad || ""
-        }));
-
-        let selectedZone = null;
-        const zoneView = document.getElementById('zone-view');
-        const searchView = document.getElementById('search-view');
-        const zoneButtons = document.getElementById('zone-buttons');
-        const searchInput = document.getElementById('search-input');
-        const resultsList = document.getElementById('results-list');
-        const backButton = document.getElementById('back-button');
-        const modal = document.getElementById('modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalSubnovedad = document.getElementById('modal-subnovedad');
-        const pasosList = document.getElementById('pasos-list');
-
-        function renderZoneButtons() {
-            const zones = [...new Set(data.map(item => item["ZONA "]).filter(z => z && z.toUpperCase() !== "IIT"))];
-            console.log("Zonas encontradas:", zones); // Debug
-            zoneButtons.innerHTML = '';
-            
-            if (zones.length === 0) {
-                zoneButtons.innerHTML = '<p class="text-red-600 col-span-4 text-center">Error: No se encontraron zonas en los datos</p>';
-                return;
+    function initDraggable() {
+        const img = document.getElementById('equipoImage');
+        let isDragging = false;
+        let startX, startY, initialLeft, initialTop;
+        
+        img.style.position = 'relative';
+        img.style.left = '0px';
+        img.style.top = '0px';
+        
+        img.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            initialLeft = parseInt(img.style.left) || 0;
+            initialTop = parseInt(img.style.top) || 0;
+            img.style.cursor = 'grabbing';
+            img.classList.add('dragging');
+        });
+        
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            img.style.left = `${initialLeft + dx}px`;
+            img.style.top = `${initialTop + dy}px`;
+        });
+        
+        window.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                img.style.cursor = 'grab';
+                img.classList.remove('dragging');
             }
-            
-            zones.forEach(zone => {
-                const btn = document.createElement('button');
-                btn.className = 'btn';
-                btn.textContent = zone;
-                btn.onclick = () => showSearchResults(zone);
-                zoneButtons.appendChild(btn);
-            });
-        }
-
-        function showSearchResults(zone) {
-            selectedZone = zone;
-            zoneView.classList.add('hidden');
-            searchView.classList.remove('hidden');
-            searchInput.value = '';
-            resultsList.innerHTML = '';
-        }
-
-        function goBackToZones() {
-            selectedZone = null;
-            searchInput.value = '';
-            resultsList.innerHTML = '';
-            searchView.classList.add('hidden');
-            zoneView.classList.remove('hidden');
-        }
-
-        backButton.onclick = goBackToZones;
-
-        function filterResults() {
-            const query = searchInput.value.toLowerCase().trim();
-            resultsList.innerHTML = '';
-            if (query === '') return;
-            const filteredData = data.filter(item => 
-                item["ZONA "] === selectedZone && 
-                item["TIPO DE NOVEDAD buscador"].toLowerCase().includes(query)
-            );
-            const novedades = [...new Set(filteredData.map(item => item["TIPO DE NOVEDAD buscador"]))];
-            renderNovedadButtons(novedades);
-        }
-
-        function renderNovedadButtons(novedades) {
-            resultsList.innerHTML = '';
-            if (novedades.length === 0) {
-                resultsList.innerHTML = '<p class="text-center text-gray-500">No se encontraron resultados.</p>';
-                return;
-            }
-            novedades.forEach(novedad => {
-                const li = document.createElement('div');
-                li.className = 'result-item';
-                li.innerHTML = `<p class="font-medium text-lg text-blue-800">${novedad}</p>`;
-                li.onclick = () => showSubNovedas(novedad);
-                resultsList.appendChild(li);
-            });
-        }
-
-        function showSubNovedas(novedad) {
-            resultsList.innerHTML = '';
-            const subNovedades = data.filter(item => item["ZONA "] === selectedZone && item["TIPO DE NOVEDAD buscador"] === novedad);
-            const backBtn = document.createElement('button');
-            backBtn.className = 'mb-4 text-blue-600 font-medium hover:underline flex items-center';
-            backBtn.innerHTML = `← Volver a la búsqueda`;
-            backBtn.onclick = () => { resultsList.innerHTML = ''; filterResults(); };
-            resultsList.appendChild(backBtn);
-            subNovedades.forEach(item => {
-                const li = document.createElement('div');
-                li.className = 'result-item';
-                li.innerHTML = `<p class="font-medium text-lg text-gray-800">${item["SUB NOVEDAD "]}</p>`;
-                li.onclick = () => showDetails(item);
-                resultsList.appendChild(li);
-            });
-        }
-
-        function generateSteps(zona, tipoNovedad, subNovedad) {
-            const steps = {
-                "MARCA": {
-                    "HURTO": {
-                        "MECHERO": [
-                            "1. El afectado reporta a seguridad del CC.",
-                            "2. Seguridad del CC informa la novedad por radio y a la central de operaciones con las características de los sospechosos para seguimiento en CCTV.",
-                            "3. La central de operaciones activa a la Policía Nacional y al asesor jurídico externo.",
-                            "4. El coordinador de operaciones se entrevista con el administrador de la marca y toma el reporte.",
-                            "5. Central de operaciones deja registro en plataforma.",
-                            "6. En caso de aprehensión de sospechosos, se solicita apoyo de la Policía Nacional."
-                        ],
-                        "ENGAÑO": [
-                            "1. El afectado reporta a seguridad del CC.",
-                            "2. Seguridad del CC informa la novedad por radio y a la central de operaciones con las características de los sospechosos para seguimiento en CCTV.",
-                            "3. La central de operaciones activa a la Policía Nacional y al asesor jurídico externo.",
-                            "4. El coordinador de operaciones se entrevista con el administrador de la marca y toma el reporte.",
-                            "5. Central de operaciones deja registro en plataforma.",
-                            "6. En caso de aprehensión de sospechosos, se solicita apoyo de la Policía Nacional."
-                        ],
-                        "COSQUILLEO": [
-                            "1. El afectado reporta a seguridad del CC.",
-                            "2. Seguridad del CC informa la novedad por radio y a la central de operaciones con las características de los sospechosos para seguimiento en CCTV.",
-                            "3. La central de operaciones activa a la Policía Nacional y al asesor jurídico externo.",
-                            "4. El coordinador de operaciones se entrevista con el afectado y toma el reporte.",
-                            "5. Central de operaciones deja registro en plataforma.",
-                            "6. En caso de aprehensión de sospechosos, se solicita apoyo de la Policía Nacional."
-                        ],
-                        "FACTOR OPORTUNIDAD": [
-                            "1. El afectado reporta a seguridad del CC.",
-                            "2. Seguridad del CC informa la novedad por radio y a la central de operaciones con las características de los sospechosos para seguimiento en CCTV.",
-                            "3. La central de operaciones activa a la Policía Nacional y al asesor jurídico externo.",
-                            "4. El coordinador de operaciones se entrevista con el afectado y toma el reporte.",
-                            "5. Central de operaciones deja registro en plataforma.",
-                            "6. En caso de aprehensión de sospechosos, se solicita apoyo de la Policía Nacional."
-                        ],
-                        "ATRACO": [
-                            "1. El afectado reporta a seguridad del CC.",
-                            "2. Seguridad del CC informa la novedad por radio y a la central de operaciones con las características de los sospechosos para seguimiento en CCTV.",
-                            "3. La central de operaciones activa a la Policía Nacional y al asesor jurídico externo.",
-                            "4. El coordinador de operaciones se entrevista con el afectado y toma el reporte.",
-                            "5. Central de operaciones deja registro en plataforma.",
-                            "6. En caso de aprehensión de sospechosos, se solicita apoyo de la Policía Nacional."
-                        ],
-                        "FLETEO": [
-                            "1. El afectado reporta a seguridad del CC.",
-                            "2. Seguridad del CC informa la novedad por radio y a la central de operaciones con las características de los sospechosos para seguimiento en CCTV.",
-                            "3. La central de operaciones activa a la Policía Nacional y al asesor jurídico externo.",
-                            "4. El coordinador de operaciones se entrevista con el afectado y con la seguridad del banco, y toma el reporte.",
-                            "5. Central de operaciones deja registro en plataforma.",
-                            "6. En caso de aprehensión de sospechosos, se solicita apoyo de la Policía Nacional."
-                        ],
-                   },
-                   "HOMICIDIO": {
-                        "AGRESION CON ARMA BLANCA": [
-                            "1. Conocimiento de la novedad por afectado o anfitriones de seguridad.",
-                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCTV.",
-                            "3. Activación de brigadistas, Solicitud de atención de área protegida y ambulancia para atención de heridos, llamado 123 línea de emergencia",
-                            "4. Activación codigo rojo y aislamiento de carpas, biombos y pendones.",
-                            "5. Se realiza despeje y acordonamiento del área.",
-                            "6. Preservación de zona y elementos probatorios.",
-                            "7. Entrega de informe a la Policía Nacional"
-                        ],
-                        "AGRESION CON ARMA DE FUEGO": [
-                            "1. Conocimiento de la novedad por afectado o anfitriones de seguridad.",
-                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCTV.",
-                            "3. Activación de brigadistas, solicitud de atención de área protegida y ambulancia para atención de heridos, llamado 123 línea de emergencia",
-                            "4. Activación codigo rojo y aislamiento de carpas, biombos y pendones.",
-                            "5. Se realiza despeje y acordonamiento del área.",
-                            "6. Preservación de zona y elementos probatorios.",
-                            "7. Entrega de informe a la Policía Nacional"
-                        ],
-                   },
-                   "SUICIDIO": {
-                        "INTENTO DE SUICIDIO": [
-                            "1. Identificación de la novedad por parte de la persona que presencia los hechos.",
-                            "2. Acercamiento del personal de seguridad brigadistas y acercamiento del área protegida.",
-                            "3. Traslado de la persona a primeros auxilios (de ser posible el traslado de la persona), Activación línea de emergencia 123 y Policía Nacional.",
-                            "4. De acuerdo a valoración, solicitud de ambulancia y llamado de familiares por intermedio de Policía Nacional."
-                        ],
-                   },
-                   "CRISIS EMOCIONALES": {
-                        "COMPORTAMIENTOS INUSUALES DE VISITANTES/EMPLEADOS": [
-                            "Se requiere presencia de encargado y/o administrador de la marca.",
-                            "1. Identificación de la novedad por parte de la persona que presencia los hechos.",
-                            "2. Acercamiento del personal de seguridad brigadistas y acercamiento del área protegida.",
-                            "3. Traslado de la persona a primeros auxilios (de ser posible el traslado de la persona), Activación línea de emergencia 123 y Policía Nacional.",
-                            "4. De acuerdo a valoración, solicitud de ambulancia y llamado de familiares por intermedio de Policía Nacional."
-                        ],
-                   },
-                   "RIÑA": {
-                        "FISICA": [
-                            "1. Identificación de la novedad.",
-                            "2. Personal de seguridad identifica el agresor y/o agresores.",
-                            "3. Se aísla la zona de conflicto",
-                            "4. Central de operaciones hace llamado de línea de emergencia 123 Policía Nacional y línea de abogados externos.",
-                            "5. De ser posible las personas son conducidas al área de sótano 1 venezuela."
-                        ],
-                        "VERBAL": [
-                            "1. Identificación de la novedad.",
-                            "2. Personal de seguridad identifica el agresor y/o agresores.",
-                            "3. Se aísla la zona de conflicto.",
-                            "4. Central de operaciones hace llamado de línea de emergencia 123 Policía Nacional y línea de abogados externos.",
-                            "5. De ser posible las personas son conducidas al área de sótano 1 venezuela."
-                        ],
-                   },
-                   "LESIONES": {
-                        "FISICAS": [
-                            "1. Identificación de la novedad.",
-                            "2. Personal de seguridad identifica el agresor y/o agresores.",
-                            "3. Se aísla la zona de conflicto",
-                            "4. Central de operaciones hace llamado de línea de emergencia 123 Policía Nacional y línea de abogados externos, al dilimir la situación se ofrece atención de área protegida.",
-                            "5. De ser posible las personas son conducidas al área de sótano 1 venezuela."
-                        ],
-                        "GOLPES CON OBJETOS": [
-                            "1. Identificación la persona",
-                            "2. Llamado de brigadistas de seguridad",
-                            "3. Traslado de la persona",
-                            "4. El coordinador de operaciones reporta en la plataforma"
-                        ],
-                        "QUEMADURAS": [
-                            "1. Identificación la persona",
-                            "2. Llamado de brigadistas de seguridad",
-                            "3. Traslado de la persona",
-                            "4. El coordinador de operaciones reporta en la plataforma"
-                        ],
-                        "CORTES": [
-                            "1. Identificación la persona",
-                            "2. Llamado de brigadistas de seguridad",
-                            "3. Traslado de la persona",
-                            "4. El coordinador de operaciones reporta en la plataforma"
-                        ],
-                        "CAIDAS": [
-                            "1. Identificación la persona",
-                            "2. Llamado de brigadistas de seguridad",
-                            "3. Traslado de la persona",
-                            "4. El coordinador de operaciones reporta en la plataforma"
-                        ],
-                        "CAUSADAS POR ANIMALES": [
-                            "1. Reportar a la central de operaciones y activar primeros auxilios.",
-                            "2. Traslado de paciente a primeros auxilios para atención y solicitud de soportes de vacunación del animal.",
-                            "3. Dejar reporte escrito datos y acuerdo entre las partes de ser necesario solicitar Policía Nacional."
-                        ],
-                   },
-                   "DAÑO EN BIEN AJENO": {
-                        "VANDALISMO": [
-                            "1. verificación de la novedad por parte del personal de seguridad y el coordinador de operaciones.",
-                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCTV.",
-                            "3. En caso de Identificación del causante se realiza llamado de Policía Nacional, abogados externos para pequeñas causas y se realiza acta de conciliación o pago por el daño causado.",
-                            "4. De no darse el anterior punto se deberá hacer un reporte del área encargada para su atención."
-                        ],
-                        "DAÑO EN BIENES E INMUEBLES": [
-                            "1. verificación de la novedad por parte del personal de seguridad y el coordinador de operaciones.",
-                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCTV.",
-                            "3. En caso de Identificación del causante se realiza llamado de Policía Nacional, abogados externos para pequeñas causas y se realiza acta de conciliación o pago por el daño causado.",
-                            "4. De no darse el anterior punto se deberá hacer un reporte del área encargada para su atención."
-                        ],
-                        "GRAFITI": [
-                            "1. verificación de la novedad por parte del personal de seguridad y el coordinador de operaciones.",
-                            "2. Seguridad CC informa novedad por radio y a la central de operaciones de las características de sospechosos para seguimiento en CCTV.",
-                            "3. En caso de Identificación del causante se realiza llamado de Policía Nacional, abogados externos para pequeñas causas y se realiza acta de conciliación o pago por el daño causado.",
-                            "4. De no darse el anterior punto se deberá hacer un reporte del área encargada para su atención."
-                        ],
-                   },
-                   "SUPLANTACION": {
-                        "SUPLANTACION DE IDENTIDAD": [
-                            "1. Identificación de la novedad",
-                            "2. Llamada línea 123 Policía Nacional para Identificación",
-                            "3. En caso de ser contratista se restringe el ingreso y se notifica al área encargada o marca del personal que causo la suplantacion.",
-                            "4. Se realiza el reporte por parte de coordinador de operaciones."
-                        ],
-                        "USO DE DOCUMENTACION FALSA": [
-                            "1. Identificación de la novedad",
-                            "2. Llamada línea 123 Policía Nacional para Identificación",
-                            "3. En caso de ser contratista se restringe el ingreso y se notifica al área encargada o marca del personal que causo la suplantacion.",
-                            "4. Se realiza el reporte por parte de coordinador de operaciones."
-                        ],
-                        "ACCESO NO AUTORIZADO": [
-                            "1. Identificación de la novedad",
-                            "2. Llamada línea 123 Policía Nacional para Identificación",
-                            "3. En caso de ser contratista se restringe el ingreso y se notifica al área encargada o marca del personal que causo la suplantacion.",
-                            "4. Se realiza el reporte por parte de coordinador de operaciones."
-                        ],
-                   },
-                   "ACTOS OBSENOS": {
-                        "EXHIBICIONISMO": [
-                            "1. Identificación de la situación por parte del anfitrión de seguridad",
-                            "2. Central de operaciones realiza llamado de Policía Nacional",
-                            "3. El coordinador de operaciones toma contacto con el y/o afectados.",
-                            "4. Se ofrece atención de primeros auxilios.",
-                            "5. Reporte de novedad por parte de coordinador de operaciones."
-                        ],
-                        "ACOSO SEXUAL": [
-                            "1. Identificación de la situación por parte del anfitrión de seguridad",
-                            "2. Central de operaciones realiza llamado de Policía Nacional",
-                            "3. El coordinador de operaciones toma contacto con el y/o afectados.",
-                            "4. Se ofrece atención de primeros auxilios.",
-                            "5. Reporte de novedad por parte de coordinador de operaciones."
-                        ],
-                        "RELACIONES SEXUALES": [
-                            "1. Identificación de la situación por parte del anfitrión de seguridad",
-                            "2. Central de operaciones realiza llamado de Policía Nacional",
-                            "3. El coordinador de operaciones toma contacto con el y/o afectados.",
-                            "4. Reporte de novedad por parte de coordinador de operaciones."
-                        ],
-                   },
-                   "CONSUMO DE SUSTANCIAS PSICOACTIVAS": {
-                        "ALCOHOL": [
-                            "1 Se informa al coordinador de operación quien se pondrá en contacto con el administrador de la marca informando la prohibición del consumo 2 en caso de no atender la solicitud del coordinador se solicita apoyo de la Policía Nacional",
-                            "3 de acuerdo al apoyo de la Policía Nacional se genera el comunicado al representante de la marca o intermedio de la dirección de marcas"
-                        ],
-                        "DROGAS Y/O SUSTANCIAS ALUCINOGENAS": [
-                            "1 Se informa al coordinador de operación quien se pondrá en contacto con el administrador de la marca informando la prohibición del consumo 2 en caso de no atender la solicitud del coordinador se solicita apoyo de la Policía Nacional",
-                            "3 de acuerdo al apoyo de la Policía Nacional se genera el comunicado al representante de la marca o intermedio de la dirección de marcas"
-                        ],
-                        "CIGARRILOS O VAPIADORES": [
-                            "1 Se informa al coordinador de operación quien se pondrá en contacto con el administrador de la marca informando la prohibición del consumo 2 en caso de no atender la solicitud del coordinador se solicita apoyo de la Policía Nacional",
-                            "3 de acuerdo al apoyo de la Policía Nacional se genera el comunicado al representante de la marca o intermedio de la dirección de marcas"
-                        ]
-                   },
-                   "AMPAROS POLICIVOS": {
-                        "ORDENES DE RESTRICCION": [
-                            "1 El coordinador de operaciones se entrevista con la solicitante de le medida de la autoproteccion y se activa protocolo de asesoramineto por parte del equiponde abogados del centro comercial",
-                            "2 Se le comunica que le debe acercar a la est5acion de policia mas cercana con el fin de ponerle el conocimiento de esta medida",
-                            "3 Se informa al equipo de seguridad con el fin de prevenir alguna situación que atente contra la utilidad de la persona",
-                            "4 por intermedio de la dirección de marcas se informa y se solicita la intervencion y acompañamiento al funcionario que atiende la medida"
-                        ],
-                        "CONFLICTOS LEGALES O ADMINISTRATIVOS": [
-                            "1 Se recepciona la solicitud por medio del coordinador de operaciones donde se solicita realizar estos requerimientos via correo electronico a la dirección de marcas y juridica. O por canales digitales o de redadiacion que se tiene en el centro comercial."
-                        ],
-                        "DISPUTAS PERSONALES AL INTERIOR DE LAS MARCAS": [
-                            "1 Se atiende el incidente por medio del equipo de seguridad y el coordinador de operaciones",
-                            "2 central de operaciones hace llamado de Policía Nacional",
-                            "3 se recopilan datos para dar a conocer el caso a la dirección de marcas y seguridad"
-                        ],
-                   },
-                   "ACCIDENTES LABORALES EN MARCAS": {
-                        "CAIDAS DE ALTURA": [
-                            "1 equipo de seguridad reporta novedad",
-                            "2 Activación de área protegida \"enfermeros\"",
-                            "3 verificación de soportes de ingreso a la copropiedad",
-                            "4 se informa al coordinador de hssq dirección de seguridad y marcas por via correo electronico"
-                        ],
-                        "ELECTROCUCIÓN": [
-                            "1 equipo de seguridad reporta novedad",
-                            "2 Activación de área protegida \"enfermeros\"",
-                            "3 verificación de soportes de ingreso a la copropiedad",
-                            "4 se informa al coordinador de mantenimiento, dirección de seguridad y marcas por via correo electronico"
-                        ],
-                        "GOLPES O CAIDAS DE OBJETOS": [
-                            "1 Se informa",
-                            "2 se activa área protegida",
-                            "3 informar a dirección de marcas y riesgos"
-                        ],
-                        "QUEMADURAS": [
-                            "1 Se informa",
-                            "2 se activa área protegida",
-                            "3 informar a dirección de marcas y riesgos"
-                        ],
-                        "LESIONES CON UTENSILIOS CORTOPUNZANTES": [
-                            "1 Se informa",
-                            "2 se activa área protegida",
-                            "3 informar a dirección de marcas y riesgos"
-                        ]
-                   },
-                   "EXTORCION": {
-                        "EXIGENCIA DE DINERO O INFORMACION": [
-                            "1 Se recibe el reporte de equipo de seguridad y coordinador de operaciones",
-                            "2 central solicita apoyo de Policía Nacional",
-                            "3 se brinda apoyo asesoramiento juridico del outsourcing de pequeñas causas",
-                            "4 se pone conocimiento a la Policía Nacional"
-                        ]
-                   },
-                   "INTRUSION": {
-                        "INGRESO NO AUTORIZADO": [
-                            "1 Lo aborda el equipo de seguridad",
-                            "2 Se solicita el registro de la persona en personal 1",
-                            "3 En caso de no encontrar registro en plataforma en mantum se realiza llamado a la Policía Nacional",
-                            "4 se informa al director de marcas para informar al administrador o propietario de la marca"
-                        ],
-                        "INGRESO FORZOSO": [
-                            "1 Lo aborda el equipo de seguridad",
-                            "2 Se solicita el registro de la persona en personal 1",
-                            "3 En caso de no encontrar registro en plataforma en mantum se realiza llamado a la Policía Nacional",
-                            "4 se informa al director de marcas para informar al administrador o propietario de la marca"
-                        ]
-                   },
-                   "EXPLOSIVOS": {
-                        "PAQUETE SOSPECHOSO": [
-                            "1 Reporte del equipo de seguridad",
-                            "2 aislamiento de la zona",
-                            "3 llamado al manejador canino",
-                            "a) si se detecta que es positiva se procede a llamar Policía Nacional se aísla el perimetro salvaguardando los visitantes y se activa validaciones de acuerdo protocolos de explosivos",
-                            "b) si da negativo el supervisor de vigilancia recoge el paquete y",
-                            "4 se activa procedimiento de objetos olvidados"
-                        ],
-                        "AMENAZA DE BOMBA": [
-                            "1 Reporte del equipo de seguridad",
-                            "2 aislamiento de la zona",
-                            "3 llamado al manejador canino",
-                            "a) si se detecta que es positiva se procede a llamar Policía Nacional se aísla el perimetro salvaguardando los visitantes y se activa validaciones de acuerdo protocolos de explosivos",
-                            "b) si da negativo el supervisor de vigilancia recoge el paquete y",
-                            "4 se activa procedimiento de objetos olvidados"
-                        ],
-                        "MATERIAL EXPLOSIVO": [
-                            "1 Reporte del equipo de seguridad",
-                            "2 aislamiento de la zona",
-                            "3 llamado al manejador canino",
-                            "a) si se detecta que es positiva se procede a llamar Policía Nacional se aísla el perimetro salvaguardando los visitantes y se activa validaciones de acuerdo protocolos de explosivos",
-                            "b) si da negativo el supervisor de vigilancia recoge el paquete y",
-                            "4 se activa procedimiento de objetos olvidados"
-                        ]
-                   },
-                   "CONDICIONES INSEGURAS": {
-                        "PISOS MOJADOS": [
-                            "1 central reporta a anfitrión de casalimpio",
-                            "2 instalacion de señalizacion de pisos mojados",
-                            "3 intervencion de la zona"
-                        ],
-                        "FALTA DE ILUMINACION": [
-                            "1 Validacion por parte del equipo de mantenimiento"
-                        ],
-                        "OBSTACULOS EN RUTAS DE EVACUACION": [
-                            "1 El personal de seguridad valida de quien es el dueño",
-                            "2 En caso de no encontrar el dueño del objeto que esta obstruyendo se procede a retirar el objeto"
-                        ],
-                        "INFRAESTRUCTURA CON RIESGO DE CAIDA": [
-                            "1 Validacion por parte del equipo de mantenimiento"
-                        ]
-                   },
-                   "FALLA EN LA RED eléctrica EN EL LOCAL": {
-                        "AUSENCIA TOTAL DE ENERGIA": [
-                            "1 Validar la Identificación de nomenclatura del local y generar la validacion de la misma en subestación.",
-                            "* Validar proteccion eléctrica del local afectado en cuarto de armario de medidores y restablecerla en caso de encontrarla disparada.",
-                            "* Verificar con pinza amperimetrica voltajes aguas abajo de proteccion eléctrica.",
-                            "* Validar tablero de distribucion eléctrica al interior de local verificando proteccion eléctrica principal. Restablecerla en caso de encontrarla disparada."
-                        ],
-                        "SOBRECALENTAMIENTO DE CABLES": [
-                            "*Realizar la Identificación de nomenclatura del local y generar la validacion de la misma en subestación.",
-                            "*Validar los conductores aguas arriba y aguas abajo del breaker y generar retorqueo en cada una de las bornas.",
-                            "*Validar los conductores en trasnferencia - contator de red y generar retorqueo en cada una de las bornas.",
-                            "*Validar por medio de la pinza amperimetrica los valores de consumos de corriente para cada una de las fases eléctricas de operacion. En caso de identificar desbalances de consumos de corriente o corrientes superiores a los valores resistentes por parte del conductor, informar a la marca para que sea gestionada la accion correctiva."
-                        ],
-                        "DAÑO DE EQUIPOS eléctricos POR MICROCORTE": [
-                            "1. Informe de la central para el apoyo de mantenimiento para evaluar la fuente de la novedad eléctrica.",
-                            "2. Confirmar si es una afectación externa del operador de red o interna por alguna actividad eléctrica realizada por el área de mantenimiento.",
-                            "3. De acuerdo con el nivel de afectación se definirán las acciones a realizar ya sea micro cortes de energía, falla total de la red o falla parcial tanto en locales como en zona común.",
-                            "4. En caso de que las fallas sean por causas de distribuidor de red se realizara el llamado a la línea de emergencias del comercializador de red para entender la causa del daño.",
-                            "5. En caso de ser una falla interna se revisará si se puede solucionar con personal interno o se requiere de proveedor de mantenimiento eléctrico del centro comercial."
-                        ],
-                   },
-                   "CORTE DE ENERGIA POR EL OPERADOR DE RED": {
-                        "FALLO EN SUMINISTRO PRINCIPAL": [
-                            "*Luego de presentado el evento se deberá esperar un máximo de 90 segundos en donde las transferencias eléctricas deberán operar de manera automatica generando los traslados de carga eléctrica para que estas sean asumidas por las plantas de generacion. Validar posteriormente que todas y cada una de las zonas tanto en comercio como zona comun este operativa.",
-                            "*En caso de transcurridos los 90 segundos luego de presentado el evento de falla y no se perciba restablecimiento de energia eléctrica; se deberá de manera inmediata y rápida asistir a cuarto de transferencias de sótano 2 correspondiente a la plaza q y persista con la falta de energia eléctrica a fin de verificar y corregir novedad de bloqueo de transferencia dando frente en el sistema de control de la misma.",
-                            "*Se deberá a su vez generar radicado con llamado y reporte a Enel X por medio de Central de Operaciones y programar cuadrilla de inspección del operador de red para que asista la situación en la zona."
-                        ],
-                        "MANTENIMIENTO NO PROGRAMADO": [
-                            "*Se debe realizar el reporte a Enel X por medio de canal de emergencias por medio de central de operaciones y hacer seguimiento a radicado generado para que se brinde informe y restablecimiento del servicio de manera breve."
-                        ],
-                        "MANTENIMIENTO PROGRAMADO POR EL OPERADOR": [
-                            "*Regularmente la maniobra de apagado por matenimiento programado es previamente informado y organizado en su logistica para proceder por lo cual una vez se presuma iniciar con el mismo se brinda comunicado con los detalles de fechas, horas y zonas.",
-                            "*Una vez se pretenda dar inicio a la maniobra programa el área de mantenimiento informara con una antelación de 5 minutos a las partes operativas para generar los alistamientos técnicos del caso.",
-                            "*Se deberán validar traslados de carga eléctrica a plantas generadoras sin novedades y que todas y cada una de las zonas comerciales y comunes se encuentren respaldadas (si la maniobra programada asi lo permite)."
-                        ]
-                   },
-                   "RUPTURA O FALLA EN TUBERIAS": {
-                        "TUBERIAS DE AGUAS LLUVIAS, SANITARIAS": [
-                            "* Identificar punto exacto de falla.",
-                            "*Delimitar zona y retirar elementos sencibles.",
-                            "*Acopiar la mayor cantidad de agua en buguis y dirigirla a pozo eyector cuartos de bombas perú.",
-                            "*Sacar listado materiales y programar arreglo lo antes posible."
-                        ],
-                        "RED DE AGUA POTABLE LOCALES": [
-                            "* Identificar punto exacto de falla.",
-                            "*Identificar zona afectada(plaza pisos)",
-                            "*Cerrar valvula de control correspondiente para controlar fuga.",
-                            "*Informar a las marcas correspondientes novedad presentada y dar un tiempo estimado.",
-                            "*Sacar listado de materiales y generar arreglo lo antes posible."
-                        ],
-                   },
-                   "FUGA DE GAS": {
-                        "FUGA DE GAS DENTRO DE LA MARCA": [
-                            "*Cerrar todas las valvulas del local posible.",
-                            "*Con los respectivos EPP y medidor de gas identificar punto de fuga.",
-                            "*Despues de identificar punto evaluar si la fuga se puede contener con valvula principal de local, si no es asi proceder a cerrar inmediatamente registro del medidor principal.",
-                            "*Informar a la marca y activar a VANTI segun corresponda."
-                        ],
-                        "FUGA DE GAS EN NICHO DE MEDIDORES": [
-                            "*Informar y activar de inmediato a VANTI.",
-                            "*Con los respectivos EPP y medidor de gas identificar punto de fuga.",
-                            "*Cerrar si se hace necesario el regular de la zona afectada.",
-                            "*Avisar a las amrcas que puedan verse afectadas.",
-                            "*Señalizar zona"
-                        ],
-                   },
-                   "INGRESO A LA PLATAFORMA DE MANTUM": {
-                        "": [
-                            "1. Abrir el navegador (Chrome, Edge o cualquier navegador actualizado).",
-                            "2. Ingresar al enlace del aplicativo: https://ccsantafebogota.cloudmantum.com/mantum/publico.",
-                            "3. Acceder a la pantalla de autenticación que se abre al ingresar al enlace.",
-                            "4. Ingresar usuario y contraseña en los campos correspondientes.",
-                            "   Usuario: tu usuario registrado en Mantum.",
-                            "   Contraseña: tu contraseña asignada o la última actualizada.",
-                            "   Después de escribirlos, hacer clic en \"Iniciar Sesión\"."
-                        ]
-                   },
-                   "COMUNICACIONES": {
-                        "": [
-                            "1. Reportar a la central de operaciones.",
-                            "2. La central reporta al personal de IIT encargado.",
-                            "3. El personal de IIT reporta la novedad a los operadores."
-                        ]
-                   },
-                   "AUTORIZACIONES PLATAFORMAS MANTUM": {
-                        "": [
-                            "1. Validar el tipo de solicitud (instalación, mantenimiento, retiro de equipos o instalación de equipos).",
-                            "2. Revisar que la solicitud de Mantum concuerde con la actividad a solicitar.",
-                            "3. Aprobar o negar la solicitud, según el caso."
-                        ]
-                   },
-                   "AVISTAMIENTO DE ANIMALES SILVESTRES (SARIGUELLAS, ARDILLAS, COMADREJAS, TINGUAS)": {
-                        "": [
-                            "1. Reportar a la central de operaciones.",
-                            "2. La central de operaciones cuenta con directorio ambiental donde se encuentra el corporativo del móvil de fauna silvestre para generar el reporte respectivo.",
-                            "3. Guardar radicado del reporte y estar atentos a la atención de la novedad por los entes involucrados."
-                        ]
-                   },
-                   "AVISTAMIENTO DE (ABEJAS O AVISPAS)": {
-                        "": [
-                            "1. Reportar a la central de operaciones.",
-                            "2. La central de operaciones debe gestionar la novedad ante el Cuerpo Oficial de Bomberos de Bogotá.",
-                            "3. La entidad correspondiente debe generar una visita de reconocimiento y realizar la debida atención de la novedad.",
-                            "4. Si el Cuerpo Oficial de Bomberos indica que la novedad no está dentro de su alcance, debe reportarse a Coordinación Ambiental para su debida gestión."
-                        ]
-                   },
-                   "ALARMA PRIORITARIA PANEL": {
-                        "SENSOR TERMICO ACTIVADO": [
-                            "1. Identificación de la novedad por parte de la central de operaciones.",
-                            "2. La central de operaciones informar al anfitrión de la plaza para validar la novedad al interior de la marca.",
-                            "3. Activar protocolo de emergencia en caso de incendio.",
-                            "4. Cerrar la novedad y normalizar el equipo/reiniciar el panel (Central de operaciones o coordinador de automatizacion).",
-                            "5. Si no puede normalizar el equipo reportar al contratista encargado para que pueda brindar solución (IFD)."
-                        ],
-                        "SENSOR DE HUMO ACTIVADO": [
-                            "1. Identificación de la novedad por parte de la central de operaciones.",
-                            "2. La central de operaciones informar al anfitrión de la plaza para validar la novedad al interior de la marca.",
-                            "3. Activar protocolo de emergencia en caso de incendio, en caso de falsa alarma, omitir este punto.",
-                            "4. Cerrar la novedad y normalizar el equipo/reiniciar el panel (Central de operaciones o coordinador de automatizacion).",
-                            "5. Si no puede normalizar el equipo reportar al contratista encargado para que pueda brindar solución (IFD)."
-                        ]
-                   },
-                   "PARQUEADERO PARA MARCA": {
-                        "SOLICITUD DE PARQUEADERO PARA MARCA": [
-                            "1. Informar al funcionario sobre los códigos QR (formulario de solicitudes) en la administración y oficina de estacionamiento."
-                        ]
-                   },
-                   "VALIDADORAS DE ESTACIONAMIENTO": {
-                        "VALIDADORA NO ENCIENDE": [
-                            "1. Informar a la central de estacionamiento.",
-                            "2. La central hace el reporte con el coordinador de automatizacion.",
-                            "3. El coordinador se comunica con el inhouse, el horario es de 10:30 a 7:00 (Eglobal)."
-                        ]
-                   },
-                },
-                "ZONA COMUN": {
-                   "HURTO": {
-                        "MECHERO": [
-                            "1. El afectado reporta a seguridad del CC.",
-                            "2. Seguridad del CC informa la novedad por radio y a la central de operaciones con las características de los sospechosos para seguimiento en CCTV.",
-                            "3. La central de operaciones activa a la Policía Nacional y al asesor jurídico externo.",
-                            "4. El coordinador de operaciones se entrevista con el administrador de la marca y toma el reporte.",
-                            "5. La central de operaciones deja registro en plataforma.",
-                            "6. En caso de aprehensión de sospechosos, se solicita apoyo de la Policía Nacional."
-                        ],
-                        "ENGAÑO": [
-                            "1. El afectado reporta a seguridad del CC.",
-                            "2. Seguridad del CC informa la novedad por radio y a la central de operaciones con las características de los sospechosos para seguimiento en CCTV.",
-                            "3. La central de operaciones activa a la Policía Nacional y al asesor jurídico externo.",
-                            "4. El coordinador de operaciones se entrevista con el administrador de la marca y toma el reporte.",
-                            "5. La central de operaciones deja registro en plataforma.",
-                            "6. En caso de aprehensión de sospechosos, se solicita apoyo de la Policía Nacional."
-                        ],
-                        "COSQUILLEO": [
-                            "1. El afectado reporta a seguridad del CC.",
-                            "2. Seguridad del CC informa la novedad por radio y a la central de operaciones con las características de los sospechosos para seguimiento en CCTV.",
-                            "3. La central de operaciones activa a la Policía Nacional y al asesor jurídico externo.",
-                            "4. El coordinador de operaciones se entrevista con el administrador de la marca y toma el reporte.",
-                            "5. La central de operaciones deja registro en plataforma.",
-                            "6. En caso de aprehensión de sospechosos, se solicita apoyo de la Policía Nacional."
-                        ],
-                        "FACTOR OPORTUNIDAD": [
-                            "1. El afectado reporta a seguridad del CC.",
-                            "2. Seguridad del CC informa la novedad por radio y a la central de operaciones con las características de los sospechosos para seguimiento en CCTV.",
-                            "3. La central de operaciones activa a la Policía Nacional y al asesor jurídico externo.",
-                            "4. El coordinador de operaciones se entrevista con el administrador de la marca y toma el reporte.",
-                            "5. La central de operaciones deja registro en plataforma.",
-                            "6. En caso de aprehensión de sospechosos, se solicita apoyo de la Policía Nacional."
-                        ],
-                        "ATRACO": [
-                            "1. El afectado reporta a seguridad del CC.",
-                            "2. Seguridad del CC informa la novedad por radio y a la central de operaciones con las características de los sospechosos para seguimiento en CCTV.",
-                            "3. La central de operaciones activa a la Policía Nacional y al asesor jurídico externo.",
-                            "4. El coordinador de operaciones se entrevista con el administrador de la marca y toma el reporte.",
-                            "5. La central de operaciones deja registro en plataforma.",
-                            "6. En caso de aprehensión de sospechosos, se solicita apoyo de la Policía Nacional."
-                        ],
-                        "FLETEO": [
-                            "1. El afectado reporta a seguridad del CC.",
-                            "2. Seguridad del CC informa la novedad por radio y a la central de operaciones con las características de los sospechosos para seguimiento en CCTV.",
-                            "3. La central de operaciones activa a la Policía Nacional y al asesor jurídico externo.",
-                            "4. El coordinador de operaciones se entrevista con el administrador de la marca y toma el reporte.",
-                            "5. La central de operaciones deja registro en plataforma.",
-                            "6. En caso de aprehensión de sospechosos, se solicita apoyo de la Policía Nacional."
-                        ]
-                   },
-                   "RGB": {
-                        "FALLA EN ILUMINACION RGB, SECTORES CON COLORES DISTORSIONADOS": [
-                            "1. Verificar con anfitrión si hay evento en zona met.",
-                            "2. Reiniciar equipo RGB.",
-                            "3. Subir ticket y notificar al coordinador de automatizacion."
-                        ]
-                   },
-                   "SISTEMA DE CCTV": {
-                        "CAMARAS INOPERATIVAS": [
-                            "1. Reportar novedad a la central de operaciones.",
-                            "2. La central hace el respectivo reporte al coordinador de automatizacion.",
-                            "3. Si no se puede solucionar reportar al contratista encargado (IFD)."
-                        ],
-                        "CÁMARAS INOPERATIVAS": [
-                            "1. Reportar novedad a la central de operaciones.",
-                            "2. La central hace el respectivo reporte al coordinador de automatizacion.",
-                            "3. Si no se puede solucionar reportar al contratista encargado (IFD)."
-                        ]
-                   },
-                   "PUNTOS DE PAGO": {
-                        "TOTEMS DE PAGO TARJETAS ATASCADAS": [
-                            "1. Informar a la central de estacionamiento.",
-                            "2. La central hace reporte con el coordinador de automatizacion y operaciones.",
-                            "3. El coordinador de operaciones calma al visitante en el sitio.",
-                            "4. La central de estacionamiento se comunica con el inhouse, G4S e Global para solucionar el atasco."
-                        ]
-                   },
-                   "TOTEMS ENCUENTRA A TU VEHICULO": {
-                        "PANTALLA TACTIL NO RESPONDE": [
-                            "1. Informar a la central de estacionamiento.",
-                            "2. La central hace el reporte con el coordinador de automatizacion.",
-                            "3. El coordinador se comunica con el inhouse, el horario es de 10:30 a 7:00 (Eglobal)."
-                        ],
-                        "TOTEMS APAGADOS O FUERA DE APLICACIÓN": [
-                            "1. Informar a la central de estacionamiento.",
-                            "2. La central hace el reporte con el coordinador de automatizacion.",
-                            "3. El coordinador se comunica con el inhouse, el horario es de 10:30 a 7:00 (Eglobal)."
-                        ]
-                   },
-                   "VALIDADORAS DE ESTACIONAMIENTO": {
-                        "VALIDADORA NO ENCIENDE": [
-                            "1. Informar a la central de estacionamiento.",
-                            "2. La central hace el reporte con el coordinador de automatizacion.",
-                            "3. El coordinador se comunica con el inhouse, el horario es de 10:30 a 7:00 (Eglobal)."
-                        ]
-                   },
-                   "PUERTAS DE EMERGENCIAS": {
-                        "PUERTA EN APERTURA": [
-                            "1. Identificación de la novedad por parte de la central de operaciones.",
-                            "2. La central de operaciones informar al anfitrión de la plaza para validar la novedad.",
-                            "3. Activar protocolo de emergencia en caso de incendio, en caso de falsa alarma, omitir este punto.",
-                            "4. Cerrar la novedad y normalizar el equipo/reiniciar el panel (Central de operaciones o coordinador de automatizacion).",
-                            "5. Si no puede normalizar el equipo reportar al contratista encargado para que pueda brindar solución (IFD)."
-                        ],
-                        "PUERTA NO REPORTA": [
-                            "1. Identificación de la novedad por parte de la central de operaciones.",
-                            "2. La central de operaciones informar al anfitrión de la plaza para validar la novedad.",
-                            "3. Normaliza la puerta reiniciar el panel y verificar estado.",
-                            "4. Si no puede normalizar el equipo reportar al contratista encargado para que pueda brindar solución (IFD)."
-                        ]
-                   },
-                   "CONTROL DE ACCESO": {
-                        "NO LEE LA HUELLA CORRECTAMENTE": [
-                            "1. Informar al coordinador de automatizacion."
-                        ]
-                   },
-                   "COMUNICACIÓN TELEFONICA": {
-                        "COMUNICACIÓN TELEFONICA": [
-                            "1. Reportar a la central de operaciones.",
-                            "2. La central reporta al personal de IIT encargado.",
-                            "3. El personal de IIT encargado reporta la novedad a los operadores."
-                        ]
-                   },
-                   "INTERNET": {
-                        "INTERNET": [
-                            "1. Reportar a la central de operaciones.",
-                            "2. La central reporta al personal de IIT encargado.",
-                            "3. El personal de IIT encargado reporta la novedad a los operadores."
-                        ]
-                   },
-                   "PANTALLAS": {
-                        "PANTALLAS": [
-                            "1. Reportar a la central de operaciones.",
-                            "2. La central reporta al personal de IIT encargado.",
-                            "3. El personal de IIT encargado reporta la novedad a los operadores."
-                        ]
-                   },
-                   "SWITCHES DE RED": {
-                        "SOBRECALENTADO": [
-                            "1. Reportar a la central de operaciones.",
-                            "2. La central reporta al personal de IIT encargado.",
-                            "3. El personal de IIT encargado reporta la novedad a los operadores."
-                        ],
-                        "VENTILADORES OBSTRUIDOS": [
-                            "1. Reportar a la central de operaciones.",
-                            "2. La central reporta al personal de IIT encargado.",
-                            "3. El personal de IIT encargado reporta la novedad a los operadores."
-                        ]
-                   },
-                   "DETECCION DE INCENDIO": {
-                        "SENSORES DISPARAN FALSAS ALARMAS": [
-                            "1. Identificación de la novedad por parte de la central de operaciones.",
-                            "2. La central de operaciones informar al anfitrión de la plaza para validar la novedad.",
-                            "3. Cerrar la novedad y normalizar el equipo/reiniciar el panel (Central de operaciones o coordinador de automatizacion).",
-                            "4. Si no puede normalizar el equipo reportar al contratista encargado para que pueda brindar solución (IFD)."
-                        ]
-                   },
-                   "ALARMA PRIORITARIA PANEL": {
-                        "ESTACIONES MANUALES ACTIVAS": [
-                            "1. Identificación de la novedad por parte de la central de operaciones.",
-                            "2. La central de operaciones informar al anfitrión de la plaza para validar la novedad.",
-                            "3. Dependiendo de la novedad se atiende la emergencia.",
-                            "4. Cerrar la novedad y normalizar el equipo (Coordinador de operaciones o coordinador de automatizacion).",
-                            "5. Si no puede normalizar el equipo reportar al contratista encargado para que pueda brindar solución (IFD)."
-                        ],
-                        "SENSOR DE HUMO ACTIVADO": [
-                            "1. Identificación de la novedad por parte de la central de operaciones.",
-                            "2. La central de operaciones informar al anfitrión de la plaza para validar la novedad.",
-                            "3. Activar protocolo de emergencia en caso de incendio, en caso de falsa alarma, omitir este punto.",
-                            "4. Cerrar la novedad y normalizar el equipo/reiniciar el panel (Central de operaciones o coordinador de automatizacion).",
-                            "5. Si no puede normalizar el equipo reportar al contratista encargado para que pueda brindar solución (IFD)."
-                        ]
-                   },
-                   "MASCOTAS": {
-                        "ANIMALES SUELTOS": [
-                            "Reportar a la central de operaciones y coordinador de operaciones y manejador canino (Securitas).",
-                            "Verificar si este posee correa o identificación, de ser así, se realiza perifoneo y búsqueda del dueño.",
-                            "Si el animal no tiene dueño se deberá informar a unidad de protección animal de la alcaldía y seguir indicaciones."
-                        ],
-                   },
-                   "CONSUMO DE SUSTANCIAS PSICOACTIVAS  (BAÑO)": {
-                        "DROGAS Y/O SUSTANCIAS ALUCINOGENAS": [
-                            "1. Debe ser reportado por el anfitrión de Casalimpia a su supervisor de turno.",
-                            "2. El supervisor de turno debe comunica a Coordinador de Operaciones y Central.",
-                            "3. Entra a revisar el tema personal de seguridad."
-                        ],
-                   },
-                   "PLATAFORMA MANTUM": {
-                        "CAIDA DEL APLICATIVO": [
-                            "1. Verificar el estado del acceso: intentar ingresar nuevamente al enlace oficial, probar desde otro navegador o equipo, y confirmar si otros compañeros también presentan la misma falla.",
-                            "2. Reportar de inmediato al Coordinador de Informática enviando mensaje o correo con esta información: fecha y hora de la caída, pantallazo del error, área o usuario afectado, y proceso que se estaba realizando (autorización, capacitación, registro, etc.).",
-                            "3. Contacto del Coordinador de Informática: yolanda.romero@centrocomercialsantafe.com.",
-                            "4. Informar a los líderes operativos sobre la contingencia.",
-                            "5. Mientras se restablece el sistema: suspender temporalmente los registros en Mantum, utilizar el plan alterno definido (registro manual, planilla o Excel) y esperar comunicación oficial de restablecimiento."
-                        ]
-                   },
-                   "PLATAFORMA ADCI": {
-                        "ERROR DEL SERVIDOR": [
-                            "1. Identificar el caso: el mensaje de error indica una falla asociada al servidor alojado en Azure, por lo que no es un problema local del Centro Comercial.",
-                            "2. Informar de inmediato al Coordinador de Informática (yolanda.romero@centrocomercialsantafe.com).",
-                            "3. El usuario afectado debe reportar el incidente, indicar la hora del suceso, enviar evidencia (pantallazo del error) y describir la acción que estaba ejecutando.",
-                            "4. Escalamiento al proveedor de soporte ASNET.",
-                            "5. Una vez recibido el reporte, el Coordinador de Informática escala el caso directamente al proveedor de soporte ASNET, encargado de la administración del servidor en Azure.",
-                            "6. Se solicita revisión de disponibilidad, tiempos de respuesta y diagnóstico técnico."
-                        ]
-                   },
-                   "LA INTRANET": {
-                        "": [
-                            "1. En caso de error de conexión a la Intranet o SharePoint en Office 365, verificar que el usuario cuente con una cuenta corporativa autorizada en el dominio.",
-                            "2. Revisar que su contraseña no haya expirado y confirmar que haya iniciado sesión únicamente con su cuenta institucional.",
-                            "3. Si el problema persiste, probar en otro navegador y reportar el caso al Coordinador de Informática con evidencia."
-                        ]
-                   },
-                   "LICENCIAS DE CORREO": {
-                        "LICENCIAS EXPIRADAS": [
-                            "1. Validar qué licencia expiró (Office 365, Azure, Power BI, antivirus o Windows 11).",
-                            "2. Reportar al Coordinador de Informática con evidencia.",
-                            "3. El Coordinador asigna o renueva la licencia según el producto; si no hay disponibilidad, se gestiona con Compras o con el proveedor."
-                        ],
-                        "FALTA DE LICENCIAS": [
-                            "1. Validar que el error corresponde a falta de licencia.",
-                            "2. Reportar al Coordinador de Informática con evidencia.",
-                            "3. El Coordinador asigna una licencia disponible o solicita compra de licencias adicionales."
-                        ]
-                   },
-                   "SERVIDORES EN LA NUBE": {
-                        "ALMACENAMIENTO LLENO": [
-                            "1. Verificar qué recurso del servidor está lleno.",
-                            "2. Reportar al Coordinador de Informática con evidencia.",
-                            "3. Liberar espacio, ampliar u optimizar el almacenamiento según la causa."
-                        ]
-                   },
-                   "ANTIVIRUS": {
-                        "ACTUALIZACION FALLIDA EN ESTACIONES DE TRABAJO": [
-                            "1. Verificar conexión a internet y estado del agente ESET.",
-                            "2. Reportar al Coordinador de Informática con pantallazo.",
-                            "3. El Coordinador sincroniza desde ESET HUB, repara el agente o reinstala el componente según corresponda."
-                        ]
-                   },
-                   "FALLA EN ILUMINACION MALL": {
-                        "INTERMITENCIA O DAÑO EN LUCES DE LOS PASILLOS Y MALL": [
-                            "*Se deberá disponer de técnico eléctrico y técnico de apoyo en alturas para posicionamiento de escalera y acceso en la zona afectada.",
-                            "*Se deberá realizar el retiro de carcasa hermetica y posteriormente el retiro de los tubos T8 afectados dando el giro medio de los mismos para la liberación de los sockets que los sujetan.",
-                            "*Se debe realizar la instalacion de los nuevos tubos T8 4000k insertandolos en los sockets y dando medio giro del tubo para el encendido de los mismos. Posteriormente se debe re instalar la carcasa transparente Hermetica."
-                        ],
-                   },
-                   "FALLA eléctrica EN PUNTOS FIJOS": {
-                        "FALLA EN TABLERO eléctrico EN SERVICIOS GENERALES": [
-                            "*Se debe disponer de técnico eléctrico que realice el destapado del tablero eléctrico de servicios generales y valide inicialmente estado de totalizador principal y estado de conductores de corriente.",
-                            "*Se debe restablecer breaker principal o sub breakers que se encuentren en estado de disparo.",
-                            "*En caso de persistir la falla en los circuitos principales o individuales, se deberá hacer seguimiento minucioso al conductor eléctrico para evidenciar la causa de corto y corregirla."
-                        ],
-                   },
-                   "FALLA eléctrica EN BAJA TENSION": {
-                        "FALLA eléctrica EN CIRCUITOS NO REGULADOS": [
-                            "*Se debe disponer de técnico eléctrico que valide la zona reportada principalmente en el cuarto eléctrico de sótano 2 del punto fijo afectado .",
-                            "*Se debe restablecer breaker principal o sub breakers que se encuentren en estado de disparo.",
-                            "*En caso de persistir la falla en los circuitos principales o individuales, se deberá hacer seguimiento minucioso al conductor eléctrico para evidenciar la causa de corto y corregirla."
-                        ],
-                   },
-                   "FALLA EN UPS DE CENTRAL OPERACIONES Y DATACENTER": {
-                        "FALLA eléctrica DE UPS CENTRAL DE OPERACIONES": [
-                            "*Se debe validar en panel de control estado de falla o alarma que nos entrega el equipo y reportarlo de inmediato al canal de emergencia del proveedor de soporte UPS Tecnologia S.A.S.",
-                            "*Se debe realizar paso de Bypass de red Regulada a Red Normal a fin de restablecer las cargas eléctricas del sistema de central de operaciones por medio de llave muletilla en tablero que se ubica cerca a UPS.",
-                            "*Se debe hacer seguimiento al caso reportado al proveedor de soporte para que en mínimo 3 horas brinde la solución de falla y/o brinde una UPS de respaldo al sistema."
-                        ],
-                   },
-                   "FALLA eléctrica EN SUMINISTRO DE ENERGIA A STANDS": {
-                        "FALLA eléctrica EN UN SOLO STAND": [
-                            "*Se debe identificar el Stand puntual con la novedad eléctrica y realizar la inspección del punto cero eléctrico suministrado en los cuartos eléctricos definidos para cada caso.",
-                            "*Se debe validar estado de operacion del totalizador principal y estado de los conductores de corriente en punto cero eléctrico. Se deberá restablecer el breaker en caso de disparo y validar los consumos de corriente mediante pinza amperimetrica.",
-                            "*En caso de no evidenciar novedad eléctrica en punto cero suministrado, se deberá realizar la validacion al interior del Stand verificando todos y cada uno de los items de proteccion y corrientes mencionados anteriormente a fin de identificar la falla y corregirla."
-                        ],
-                   },
-                   "CABLES eléctricos EXPUESTOS": {
-                        "CABLES eléctricos EXPUESTOS EN CAJAS DE PISO": [
-                            "*Se deberá realizar la validacion de los conductores expuestos identificando si se encuentran en ese instante de tiempo alimentando electricamente algun Stand o equipo especifico. De no disponer del uso de los mismos se podra proceder con el retiro de los mismos de la zona.",
-                            "*En caso de tener en uso los conductores eléctricos para algun fin operativo en especifico, se deberán canalizar de manera adecuada los mismos por medio de canaleta de piso y señalizacion y/o generar la homologacion de la conexión eléctrica por medio de un punto cercano que permita la menor exposicion de los conductores."
-                        ],
-                   },
-                   "SONIDO": {
-                        "ALTAVOCES DAÑADOS": [
-                            "1. Se informa a la central de operaciones para verificar el funcionamiento.",
-                            "2. La central de operaciones verifica y corrige.",
-                            "3. Si la central no puede solucionar reporta al contratista encargado para que pueda brindar solución."
-                        ],
-                   },
-                   "AMBIENTAL": {
-                        "CONTENEDORES DE RECICLAJE INSUFICIENTES O MAL UTILIZADOS.": [
-                            "1. Reportar a la central de operaciones el tipo de novedad y el nombre del contenedor, incluyendo registro fotográfico si es posible.",
-                            "2. La central de operaciones reporta la novedad a la supervisora o al outsourcing de oficios generales.",
-                            "3. El supervisor de aseo general realiza el cierre de la novedad."
-                        ],
-                        "ACUMULACIÓN DE RESIDUOS EN ÁREAS DE DESCANSO": [
-                            "1. Reportar la novedad a la central de operaciones con la ubicación exacta e incluir registro fotográfico si es posible."
-                        ],
-                        "INGRESO DE ALIMENTOS EN CONDICIONES INSALUBRES (COSTALES, GUACALES ENTRE OTROS)": [
-                            "1. Reportar a la central de operaciones con la siguiente información: marca, ubicación de la novedad, registro fotográfico y hora.",
-                            "2. La central de operaciones reporta el caso a Coordinación Ambiental, enviando la información respectiva.",
-                            "3. Coordinación Ambiental revisa el caso y genera el proceso correspondiente."
-                        ],
-                        "TRANSPORTE INADECUADO EN AREAS COMUNES NO PERMITIDAS DE RESIDUOS PELIGROSOS": {
-                            "": [
-                                "1. Reportar a la central de operaciones con la siguiente información: marca, ubicación de la novedad, registro fotográfico y hora.",
-                                "2. La central de operaciones reporta a Coordinación Ambiental enviando la información respectiva.",
-                                "3. Coordinación Ambiental revisa el caso y genera el proceso correspondiente."
-                            ]
-                        },
-                        "AVISTAMIENTO DE PALOMAS": [
-                            "1. Reportar a la central de operaciones (ubicación y cantidad).",
-                            "2. La central de operaciones reporta a Coordinación Ambiental la novedad.",
-                            "3. Se debe generar diagnóstico inicial sobre la situación.",
-                            "4. Realizar el cierre de la novedad."
-                        ],
-                        "MALOS OLORES POR FALTA DE LIMPIEZA EN BAÑOS Y ÁREAS DE COMIDA.": [
-                            "El coordinador de operaciones o la central activa a casa limpia y este a su vez activa su propio protocolo de limpieza y desinfección."
-                        ],
-                   },
-                   "ACCIDENTES LABORALES EN MARCAS": {
-                        "ATRAPAMIENTO EN TRANSPORTE VERTICAL": [
-                            "1 Activación de protocolo de emergcia por aprte de la centra con el proveedor del tranaporte vertical",
-                            "2 equipo de seguridadoa aísla la zona y",
-                            "3 activa área protegida \"enfermeria\"",
-                            "4 Activación del equipo de mantenimiento",
-                            "5 informar la noveda a mantenimiento y a seguridad y hsq"
-                        ]
-                   },
-                },
-                "ESTACIONAMIENTO": {
-                   "SISTEMA DE CCTV": {
-                        "": [
-                            "1. Reportar novedad a la central de operaciones.",
-                            "2. La central hace el respectivo reporte al coordinador de automatizacion.",
-                            "3. Si no se puede solucionar reportar al contratista encargado (IFD)."
-                        ]
-                   },
-                   "SISTEMA DE GUIADO": {
-                        "": [
-                            "1. Reportar novedad a la central de operaciones.",
-                            "2. La central hace el respectivo reporte al coordinador de automatizacion.",
-                            "3. Si no se puede solucionar reportar al contratista encargado (EGLOBAL)."
-                        ]
-                   },
-                   "SISTEMA DE INGRESO": {
-                        "": [
-                            "1. Reportar novedad a la central de operaciones.",
-                            "2. La central hace el respectivo reporte al coordinador de automatizacion e ingeniero inhouse.",
-                            "3. La novedad sera atendida por el inhouse."
-                        ]
-                   },
-                   "SISTEMA DE SALIDA": {
-                        "": [
-                            "1. Reportar novedad a la central de operaciones.",
-                            "2. La central hace el respectivo reporte al coordinador de automatizacion e ingeniero inhouse.",
-                            "3. La novedad sera atendida por el inhouse."
-                        ],
-                        "SISTEMA SUSPENDIDO": [
-                            "1. Reportar novedad a la central de operaciones.",
-                            "2. La central hace el respectivo reporte al coordinador de automatizacion e ingeniero inhouse.",
-                            "3. La novedad sera atendida por el inhouse."
-                        ],
-                        "CAIDA PAGINA DE LA DIAN": [
-                            "1. Reportar novedad a la central de operaciones.",
-                            "2. La central hace el respectivo reporte al coordinador de automatizacion e ingeniero inhouse.",
-                            "3. La novedad sera atendida por el inhouse y mesa de ayuda.",
-                            "4. Si la novedad dura mas de 15 minutos enviar validadora con inhouse para configurar convenio numero 369.",
-                            "5. Tener en cuenta hora de inicio, enviar validadora salida 185.",
-                            "6. Definir con central y coordinador de operaciones redirigir a los visitantes por la 185 para aplicar el convenio.",
-                            "7. Se valida cortesia hasta que se reestablezca el servicio de la DIAN.",
-                            "8. Luego de restablecido el servicio tener en cuenta hora de finalizacion de la contingencia."
-                        ]
-                   },
-                   "PUNTOS DE PAGO": {
-                        "": [
-                            "1. Reportar novedad a la central de operaciones.",
-                            "2. La central hace el respectivo reporte al coordinador de automatizacion e ingeniero inhouse.",
-                            "3. La novedad sera atendida por el inhouse."
-                        ]
-                   },
-                   "TALANQUERAS": {
-                        "": [
-                            "1. Reportar novedad a la central de operaciones.",
-                            "2. La central hace el respectivo reporte al coordinador de automatizacion e ingeniero inhouse.",
-                            "3. La novedad sera atendida por el inhouse."
-                        ]
-                   },
-                   "ACCIDENTE DE TRANSITO": {
-                        "CHOQUE CONTRA ESTRUCTURAS": [
-                            "1. Reportar a la central de estacionamiento y coordinador de operaciones.",
-                            "2. Si no compromete lesiones a personas, se insta a las personas a llegar a un acuerdo mutuo, de no ser así se solicitara apoyo de policía Nacional.",
-                            "3. De existir lesiones se asistira con el área protegida del CC",
-                            "4. Se solicitará policía nacional y los intervinientes no podrán salir del centro comercial hasta tanto llegue la autoridad competente."
-                        ],
-                   },
-                   "ACTOS OBSENOS": {
-                        "ACTOS SEXUALES": [
-                            "1. El supervisor de turno debe comunicar a Coordinador de Operaciones y Central.",
-                            "2. Entra a revisar el tema con personal de seguridad."
-                        ],
-                   },
-                   "MASCOTAS": {
-                        "ANIMALES ABANDONADOS": [
-                            "1. Reportar a la central de operaciones y coordinador de operaciones y manejador canino (Securitas).",
-                            "2. Verificar si este posee correa o identificación, de ser así, se realiza perifoneo y búsqueda del dueño",
-                            "3. Si el animal no tiene dueño se deberá informar a unidad de protección animal de la alcaldía y seguir indicaciones."
-                        ],
-                   },
-                   "FALLA eléctrica EN MEDIA TENSION Y/O BAJA TENSION": {
-                        "FALLA eléctrica EN CIRCUITOS NO REGULADOS": [
-                            "*Se debe disponer de técnico eléctrico que valide la zona o plaza reportada principalmente a fin de realizar la verificación en la subestación de sótano 2 correspondiente .",
-                            "*Una vez identificada la zona, deberá verificar valores de tension eléctrica a 440VAC junto con los estados de protecciones principales de los circuitos de fuerza a tal voltaje en cuartos de transferencias.",
-                            "*Una vez identificada la zona, deberá verificar valores de tension eléctrica a 220VAC junto con los estados de protecciones principales de los circuitos de fuerza a tal voltaje. en cuartos de puntos fijos sótano 2."
-                        ],
-                   },
-                   "FALLA EN ILUMINACION DE SOTANOS": {
-                        "INTERMITENCIA O DAÑO EN LUCES DE SOTANOS": [
-                            "*Se deberá disponer de técnico eléctrico y técnico de apoyo en alturas para posicionamiento de escalera y acceso en la zona afectada.",
-                            "*Se deberá realizar el retiro de la luminaria empotrada y la desconexion del Driver del equipo separando cuidadosamente los conductores Fase y Neutro a fin de evitar corto circuito.",
-                            "*Se debe realizar la conexión eléctrica del nuevo Driver a los conductores Fase y Neutro y posteriormente la conexión del Jack al equipo luminico (24w 4000K) empotrando nuevamente este ultimo en el lugar destinado del techo de mall."
-                        ],
-                   },
-                   "FALLA eléctrica EN PUNTOS FIJOS": {
-                        "FALLA EN TABLERO eléctrico EN SERVICIOS GENERALES": [
-                            "*Se debe disponer de técnico eléctrico que realice el destapado del tablero eléctrico de servicios generales y valide inicialmente estado de totalizador principal y estado de conductores de corriente.",
-                            "*Se debe restablecer breaker principal o sub breakers que se encuentren en estado de disparo.",
-                            "*En caso de persistir la falla en los circuitos principales o individuales, se deberá hacer seguimiento minucioso al conductor eléctrico para evidenciar la causa de corto y corregirla."
-                        ],
-                   },
-                   "FALLA DE ENERGIA EN CENTRAL DE ESTACIONAMIENTO": {
-                        "FALLA eléctrica DE CIRCUITO REGULADO DE UPS EN CENTRAL DE ESTACIONAMIENTO": [
-                            "*Se debe validar en panel de control estado de falla o alarma que nos entrega el equipo y reportarlo de inmediato al canal de emergencia del proveedor de soporte UPS Tecnologia S.A.S.",
-                            "*Se debe realizar paso de Bypass de red Regulada a Red Normal a fin de restablecer las cargas eléctricas del sistema de central de operaciones por medio de llave muletilla en tablero que se ubica cerca a UPS.",
-                            "*Se debe hacer seguimiento al caso reportada al proveedor de soporte para que en mínimo 3 horas brinde la solución de falla y/o brinde una UPS de respaldo al sistema."
-                        ],
-                        "FALLA eléctrica EN CIRCUITO NO REGULADO": [
-                            "*Se debe disponer de técnico eléctrico que realice el destapado del tablero eléctrico de circuitos eléctricos no regulados y valide inicialmente estado de totalizador principal y estado de conductores de corriente.",
-                            "*Se debe restablecer breaker principal o sub breakers que se encuentren en estado de disparo.",
-                            "*En caso de persistir la falla en los circuitos principales o individuales, se deberá hacer seguimiento minucioso al conductor eléctrico para evidenciar la causa de corto y corregirla."
-                        ],
-                   },
-                   "BLOQUEO DE TRANSFERENCIAS eléctricas": {
-                        "BLOQUEO DE TRANSFERENCIAS eléctricas": [
-                            "*Se debe asistir a cuarto de transferencias en la subestación referenciada o reportada para la plaza en falla y verificar el estado de enclavamiento de los contactores de red y suplencia.",
-                            "*En el panel de control de la transferencia se deberá identificar las botoneras de Red, Suplencia y Reset, en donde se deberá pulsar por almenos 05 segundos el boton de reset.",
-                            "*Se debe mantener cerrada la compuerta de transferencia para mitigar cualquier riesgo eléctrico. La transferencia deberá dar lectura de señales en donde se escuchara el enclavamiento de alguno de los contactores ya sea red normal o suplencia segun sea la condicion de presencia o ausencia de tension eléctrica.",
-                            "*En el caso tal que la falla persista, se deberá realizar maniobra de manera manual tal que se sugiere generar reporte de emergencia y llamado de emergencia a proveedor de respaldo Tesla Mantenimiento eléctrico S.A.S"
-                        ],
-                   },
-                   "FALLA EN ARRANQUE DE PLANTAS eléctricas": {
-                        "FALLA DE ARRANQUE POR SISTEMA eléctrico": [
-                            "*Se debe validar en cuarto eléctrico de generadores de subestación correspondiente a la zona afectada, el panel de control de la planta que genero el arranque a fin de identificar el tipo de alarma que presenta el equipo .",
-                            "*Una vez se halla validada la novedad que entrega el equipo, si la misma no es de gran relevancia y permite generar el arranque, se deberá operar la muletilla de automatico a manual y dar el arranque del generador.",
-                            "*Caso contrario si la alarma es de estado crítico, como falta de refrigerante, bajo nivel de combustible, sistema mecanico, etc. Se deberá dar llamado de emergencia y reporte a proveedor de respaldo Cummins de los Andes para que la novedad sea asistida por el personal especialista."
-                        ],
-                   },
-                   "ABASTECIMIENTO INSUFICIENTE DE ACPM PARA LAS PLANTAS eléctricas": {
-                        "DESOCUPADO DE TANQUES DE ALMACENAMIENTO DE ACPM A NIVELES CRITICOS": [
-                            "*Se deberá validar si la zona de falla es una subestación o todas a nivel general.",
-                            "*De presentar la novedad en una sola de las subestaciones, se debe generar el apagado del equipo de suplencia hasta tanto se realice el abastecimiento del tanque de suministro realizando el drenado por vidones en uno de los tanques de subestaciones aledañas a fin de generar abastecimiento en el tanque de la subestación de zona afectada y posteriormente realizar el encendido del equipo.",
-                            "*En caso de presentar falla general y/o presentar bajo nivel de combustible en todas las subestaciones, se deberá generar el apagado de todos los equipos de suplencia con tal condicion y generar el enlace inmediato con proveedor de suministro de ACPM para abastecimiento de emergencia."
-                        ],
-                   },
-                   "CABLES eléctricos EXPUESTOS": {
-                        "CABLES eléctricos EXPUESTOS EN TECHOS DE SOTANOS": [
-                            "*Se debe acceder a la zona reportada y generar el seguimiento del conductor a fin de identificar si el mismo cuenta con presencia o ausencia de tension eléctrica.",
-                            "*En caso de tener tension eléctrica y de encontrase operando para cualquier fin en especial, se deberá generar un peinado y canalizacion adecuada del mismo que corrija la exposicion.",
-                            "*En caso de tener ausencia de tension eléctrica se podra realizar el seguimiento del mismo hasta el punto de derivacion de donde origina el conductor y realizar el retiro controlado y definitivo del mismo."
-                        ],
-                   },
-                   "AMBIENTAL": {
-                        "DERRAMES DE ACEITES O COMBUSTIBLES QUE CONTAMINAN EL SUELO.": {
-                            "": [
-                                "1. Reportar la novedad a la central de estacionamiento con la respectiva ubicación.",
-                                "2. Tan pronto se genere el reporte, realizar apoyo de señalización para evitar una condición insegura.",
-                                "3. La central de estacionamiento debe reportar la novedad al supervisor de servicios generales para su atención.",
-                                "4. El anfitrión encargado de la novedad debe disponer de los elementos e insumos necesarios para realizar una adecuada recolección."
-                            ]
-                        },
-                        "CONTAMINACIÓN POR EMISIONES DE VEHÍCULOS Y DERRAMES DE LÍQUIDOS.": {
-                            "": [
-                                "1. Reportar la novedad a la central de estacionamiento con la respectiva ubicación.",
-                                "2. Tan pronto se genere el reporte, realizar apoyo de señalización para evitar una condición insegura.",
-                                "3. La central de estacionamiento debe reportar la novedad al supervisor de servicios generales para su atención.",
-                                "4. El anfitrión encargado de la novedad debe disponer de los elementos e insumos necesarios para realizar una adecuada recolección."
-                            ]
-                        },
-                        "NO RECOLECCION DE PACAS DE RESIDUOS NO APROVECHABLES": {
-                            "": [
-                                "1. Realizar el reporte a la central de operaciones.",
-                                "2. La central de operaciones reporta al directorio para la gestión de esta novedad; si es necesario, se comunica al celular corporativo compartido y se reporta el caso."
-                            ]
-                        },
-                        "PAROS DE OPERACIÓN DE EQUIPOS UTILIZADOS EN MANEJOS DE RESIDUOS SOLIDOS (MALACATE Y COMPACTADORAS)": {
-                            "": [
-                                "1. Reportar la novedad a la central de operaciones.",
-                                "2. La central de operaciones debe informar al equipo de mantenimiento para su debida revisión y gestión.",
-                                "3. Si la novedad no se resuelve, el equipo de mantenimiento debe generar la respectiva requisición para el mantenimiento del equipo.",
-                                "4. Si no se logra solucionar la novedad por parte del equipo de mantenimiento, se hace necesario reportar a Coordinación Ambiental."
-                            ]
-                        },
-                        "ACUMULACIÓN DE RESIDUOS CENTRO DE ACOPIO ESTACIONAMIENTO": {
-                            "": [
-                                "(tener en cuenta la capacidad del centro de acopio y el día de la semana para determinar la novedad para saber si es contingencia)",
-                                "Tipos de residuos:",
-                                "1. Reportar a la coordinación ambiental la novedad (orgánicos, aprovechables, no aprovechables)",
-                                "2. De acuerdo con la novedad:",
-                                "NO APROVECHABLES: se activa plan de contingencia que es apoyo con un vehículo externo para la recolección que tenga permiso para ir al relleno sanitario.",
-                                "APROVECHABLES: disponer de una bodega dentro del mall para acopiar las pacas ya organizadas y tener plan B de empresas que tienen ese servicio.",
-                                "ORGANICOS: tener contacto y activar una empresa que tenga el servicio de recolección."
-                            ]
-                        },
-                   },
-                },
-                "PERIMETRO": {
-                   "ACUMULACIÓN DE BASURA EN ZONAS EXTERIORES Y PERÍMETROS.": {
-                        "": [
-                            "1. Reportar a la central de operaciones con ubicación y registro fotográfico, de ser posible.",
-                            "2. La central de operaciones debe realizar el reporte a la empresa outsourcing de servicios generales.",
-                            "3. Realizar el cierre de la novedad con su respectiva validación."
-                        ]
-                   },
-                   "ACUMULACIÓN DE AGUA ESTANCADA POR DRENAJES OBSTRUIDOS, GENERANDO FOCOS DE INFECCIÓN.": {
-                        "": [
-                            "* Este ítem corresponde a recolección de aguas negras en canaletas o cárcamos de estacionamiento.",
-                            "1. Reportar a central de operaciones.",
-                            "2. Reportar novedad de filtración junto con registro fotográfico y ubicación exacta.",
-                            "3. La central de operaciones reporta la novedad al supervisor de servicios generales.",
-                            "4. Cerrar la novedad con la recolección del agua estancada."
-                        ]
-                   },
-                   "PRESENCIA DE PLAGAS": {
-                        "PRESENCIA DE PLAGAS POR MALA GESTIÓN DE RESIDUOS.": [
-                            "1. Reportar a la central de operaciones y esta a su vez a la coordinación ambiental.",
-                            "2. Se hace seguimiento de lugar frecuentado y tiempos de permanencia.",
-                            "3. Se observa estado del animal y se custodia en medida de lo posible mientras llega el proveedor de manejo de plagas.",
-                            "4. No es recomendado, sin embargo, si se siente que puede atraparlo se recomienda utilizar algún elemento cercano para impedir que el animal escape como por ejemplo canecas o conos y así asegurar la captura del animal mientras llega el proveedor de manejo de plagas."
-                        ],
-                   },
-                },
-                "EN TODAS": {
-                   "CAIDAS DE RAMAS, RECOLECCION DE MATERIA VEGETAL": {
-                        "": [
-                            "1. La central reporta a Coordinación Ambiental.",
-                            "2. Coordinación Ambiental reporta al líder de jardinería.",
-                            "3. En caso de que la novedad se presente después de las 3 de la tarde y en sábados, domingos o festivos, se hace necesario gestionar el cerramiento del área."
-                        ]
-                   },
-                   "AVISTAMIENTO DE ANIMALES SILVESTRES (SARIGUELLAS, ARDILLAS, COMADREJAS, TINGUAS)": {
-                        "": [
-                            "1. Reportar a la central de operaciones.",
-                            "2. La central de operaciones cuenta con directorio ambiental donde se encuentra el corporativo del móvil de fauna silvestre para generar el reporte respectivo.",
-                            "3. Guardar radicado del reporte y estar atentos a la atención de la novedad por los entes involucrados."
-                        ]
-                   },
-                   "AVISTAMIENTO DE (ABEJAS O AVISPAS)": {
-                        "": [
-                            "1. Reportar a la central de operaciones.",
-                            "2. La central de operaciones debe gestionar la novedad ante el Cuerpo Oficial de Bomberos de Bogotá.",
-                            "3. La entidad correspondiente debe generar una visita de reconocimiento y realizar la debida atención de la novedad.",
-                            "4. Si el Cuerpo Oficial de Bomberos indica que la novedad no está dentro de su alcance, debe reportarse a Coordinación Ambiental para su debida gestión."
-                        ]
-                   }
-                },
-            };
-
-            return (steps[zona]?.[tipoNovedad]?.[subNovedad]) ||
-                (steps["EN TODAS"]?.[tipoNovedad]?.[subNovedad]) ||
-                ["Evaluar la situación.", "Notificar al personal responsable.", "Aislar la zona.", "Documentar lo ocurrido.", "Seguir protocolos establecidos."];
-        }
-
-        function redactStepText(step) {
-            if (typeof step !== 'string') return step;
-
-            let text = step.trim();
-            if (!text) return text;
-
-            const match = text.match(/^(\*|\d+\.)\s*/);
-            const prefix = match ? match[1] : '';
-            let body = match ? text.slice(match[0].length) : text;
-
-            const replacements = [
-                [/\bcaracteristicas\b/gi, 'características'],
-                [/\bccv\b/gi, 'CCTV'],
-                [/\bponal\b/gi, 'Policía Nacional'],
-                [/\baprension\b/gi, 'aprehensión'],
-                [/\bidentificacion\b/gi, 'identificación'],
-                [/\bactivacion\b/gi, 'activación'],
-                [/\batencion\b/gi, 'atención'],
-                [/\btencion\b/gi, 'atención'],
-                [/\bvaloracion\b/gi, 'valoración'],
-                [/\bpolicia nacional\b/gi, 'Policía Nacional'],
-                [/\blinea\b/gi, 'línea'],
-                [/\baisla\b/gi, 'aísla'],
-                [/\bsotano\b/gi, 'sótano'],
-                [/\bsituacion\b/gi, 'situación'],
-                [/\bllamdo\b/gi, 'llamado'],
-                [/\banfitrion\b/gi, 'anfitrión'],
-                [/\bcodigos\b/gi, 'códigos'],
-                [/\badministracion\b/gi, 'administración'],
-                [/\binfoma\b/gi, 'informa'],
-                [/\bpondra\b/gi, 'pondrá'],
-                [/\bprohibicion\b/gi, 'prohibición'],
-                [/\brepresentate\b/gi, 'representante'],
-                [/\bdireccion\b/gi, 'dirección'],
-                [/\btrancurridos\b/gi, 'transcurridos'],
-                [/\btransfercias\b/gi, 'transferencias'],
-                [/\bdebera\b/gi, 'deberá'],
-                [/\bdeberan\b/gi, 'deberán'],
-                [/\btecnico\b/gi, 'técnico'],
-                [/\belectrico\b/gi, 'eléctrico'],
-                [/\belectricos\b/gi, 'eléctricos'],
-                [/\belectricas\b/gi, 'eléctricas'],
-                [/\belectrica\b/gi, 'eléctrica'],
-                [/\boperacion\b/gi, 'operación'],
-                [/\binspeccion\b/gi, 'inspección'],
-                [/\bconexion\b/gi, 'conexión'],
-                [/\bverificacion\b/gi, 'verificación'],
-                [/\bsubestacion\b/gi, 'subestación'],
-                [/\bcritico\b/gi, 'crítico'],
-                [/\bsolucion\b/gi, 'solución'],
-                [/\bminimo\b/gi, 'mínimo'],
-                [/\bmaximo\b/gi, 'máximo'],
-                [/\brapida\b/gi, 'rápida'],
-                [/\bantelacion\b/gi, 'antelación'],
-                [/\btecnicos\b/gi, 'técnicos'],
-                [/\bliberacion\b/gi, 'liberación'],
-                [/\balmenos\b/gi, 'al menos'],
-                [/\bhalla\b/gi, 'haya'],
-                [/\bencontrase\b/gi, 'encontrarse']
-            ];
-
-            replacements.forEach(([pattern, value]) => {
-                body = body.replace(pattern, value);
-            });
-
-            body = body
-                .replace(/^se debe\s+/i, 'Se debe ')
-                .replace(/^se deberá\s+/i, 'Se deberá ')
-                .replace(/^debe\s+/i, 'Debe ')
-                .replace(/^en caso de\s+/i, 'En caso de ');
-
-            body = body
-                .replace(/\s+/g, ' ')
-                .replace(/\s+([,.;:])/g, '$1')
-                .replace(/\(\s+/g, '(')
-                .replace(/\s+\)/g, ')')
-                .trim();
-
-            if (body.length > 0) {
-                body = body.charAt(0).toUpperCase() + body.slice(1);
-                if (!/[.;:]$/.test(body)) {
-                    body += '.';
-                }
-            }
-
-            return prefix ? `${prefix} ${body}` : body;
-        }
-
-        function showDetails(item) {
-            modalTitle.textContent = item["TIPO DE NOVEDAD buscador"];
-            modalSubnovedad.textContent = `Sub-novedad: ${item["SUB NOVEDAD "]}`;
-            const pasos = generateSteps(item["ZONA "], item["TIPO DE NOVEDAD buscador"], item["SUB NOVEDAD "]).map(redactStepText);
-            pasosList.innerHTML = '';
-            const pasosGenerales = [
-                "Evaluar la situación.",
-                "Notificar al personal responsable.",
-                "Aislar la zona.",
-                "Documentar lo ocurrido.",
-                "Seguir protocolos establecidos."
-            ];
-            pasos.forEach((paso, idx) => {
-                const li = document.createElement('li');
-                li.style.animation = 'fadeInStep 0.5s ease both';
-                li.style.animationDelay = `${idx * 0.07}s`;
-                let colorClass = pasosGenerales.includes(paso)
-                    ? 'text-yellow-600'
-                    : 'text-gray-900';
-                li.className = `transition-all duration-300 shadow-sm border border-gray-200 mb-1 px-4 py-2 rounded-lg flex items-center ${colorClass}`;
-                li.innerHTML = `${paso}`;
-                pasosList.appendChild(li);
-            });
-            modal.classList.remove('hidden');
-        }
-
-        function closeModal() { 
-            modal.classList.add('hidden'); 
-        }
-
-        window.onload = renderZoneButtons;
-    </script>
+        });
+        
+        img.addEventListener('dragstart', (e) => e.preventDefault());
+    }
+    
+    document.getElementById('btn-buscar').addEventListener('click', buscar);
+    document.getElementById('buscador').addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') buscar();
+    });
+    
+    document.querySelector('.close-modal').addEventListener('click', cerrarModal);
+    document.querySelector('.btn-cerrar').addEventListener('click', cerrarModal);
+    document.getElementById('modalPasos').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('modalPasos')) cerrarModal();
+    });
+    
+    initDraggable();
+    window.onload = () => {
+        document.getElementById('resultados').innerHTML = '<div class="no-result">🔎 Escribe algo en el buscador y presiona Buscar...</div>';
+    };
+})();
+</script>
 </body>
 </html>
-

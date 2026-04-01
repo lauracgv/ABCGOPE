@@ -317,6 +317,14 @@
             font-family: inherit;
             border-left: 4px solid #0056b3;
         }
+
+        .paso-item {
+            margin-bottom: 14px;
+        }
+
+        .paso-item:last-child {
+            margin-bottom: 0;
+        }
         
         .close-modal {
             position: absolute;
@@ -656,18 +664,18 @@
             resultadosDiv.innerHTML = `<div class="no-result">😕 No se encontraron resultados para "${termino}".<br>Prueba con: robo, incendio, pelea, caida, policia, fuga, etc.</div>`;
             countSpan.innerHTML = `📋 Mostrando <strong>0</strong> resultados`;
         } else {
-            let html = ` <table> <thead> <tr> <th>Sub Área</th> <th>Tipo de Novedad</th> </tr> </thead> <tbody>`;
+            let html = ` <table> <thead> <tr> <th>Sub Área</th> <th>Sub Novedad</th> </tr> </thead> <tbody>`;
             resultados.forEach((fila, idx) => {
-                let tipoResaltado = fila[3];
+                let subNovedadResaltada = corregirTextoVisual(fila[4] || '-');
                 terminosBusqueda.forEach(term => {
                     if (term.length > 2) {
                         const regex = new RegExp(`(${term})`, 'gi');
-                        tipoResaltado = tipoResaltado.replace(regex, '<span class="highlight">$1</span>');
+                        subNovedadResaltada = subNovedadResaltada.replace(regex, '<span class="highlight">$1</span>');
                     }
                 });
                 html += `<tr class="clickable-row" data-index="${idx}">
-                            <td class="subarea-text">${fila[2] || '-'}</td>
-                            <td><span class="tipo-novedad-badge">${tipoResaltado}</span></td>
+                            <td class="subarea-text">${corregirTextoVisual(fila[2] || '-')}</td>
+                            <td><span class="tipo-novedad-badge">${subNovedadResaltada}</span></td>
                           </tr>`;
             });
             html += `</tbody> </table>`;
@@ -683,18 +691,101 @@
         }
     }
 
+    function escaparHtml(texto) {
+        return texto
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function corregirTextoVisual(texto) {
+        if (!texto) return texto;
+
+        const correcciones = [
+            [/\bobsenos\b/gi, 'obscenos'],
+            [/\bobseno\b/gi, 'obsceno'],
+            [/\bextorcion\b/gi, 'extorsión'],
+            [/\belectrocucion\b/gi, 'electrocución'],
+            [/\baprension\b/gi, 'aprehensión'],
+            [/\bperosnal\b/gi, 'personal'],
+            [/\bllamdo\b/gi, 'llamado'],
+            [/\bprocedimeinto\b/gi, 'procedimiento'],
+            [/\bverficiacion\b/gi, 'verificación'],
+            [/\bcoordiandor\b/gi, 'coordinador'],
+            [/\bcoordinandor\b/gi, 'coordinador'],
+            [/\brestablesca\b/gi, 'restablezca'],
+            [/\btrasnferencia\b/gi, 'transferencia'],
+            [/\btrasnferencias\b/gi, 'transferencias'],
+            [/\belecmentos\b/gi, 'elementos'],
+            [/\bamrcas\b/gi, 'marcas'],
+            [/\bvigia\b/gi, 'vigía'],
+            [/\boperacion\b/gi, 'operación'],
+            [/\bsolucion\b/gi, 'solución'],
+            [/\binformacion\b/gi, 'información'],
+            [/\bpolicia\b/gi, 'policía'],
+            [/\blinea\b/gi, 'línea'],
+            [/\barea\b/gi, 'área'],
+            [/\bnoveda\b/gi, 'novedad']
+        ];
+
+        let salida = texto;
+        correcciones.forEach(([regex, reemplazo]) => {
+            salida = salida.replace(regex, reemplazo);
+        });
+
+        return salida;
+    }
+
+    function formatearPasos(pasosTexto) {
+        if (!pasosTexto || pasosTexto.trim() === '') {
+            return '<div class="paso-item"><strong>1).</strong> No hay pasos definidos</div>';
+        }
+
+        let textoNormalizado = pasosTexto
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/\r/g, '');
+
+        textoNormalizado = textoNormalizado
+            .replace(/([^\n])\s+(\d+[\.)])/g, '$1\n$2')
+            .replace(/([^\n])\s+([a-zA-Z]\))/g, '$1\n$2');
+
+        const pasosLimpios = textoNormalizado
+            .split(/\n+/)
+            .map(linea => linea.trim())
+            .filter(linea => linea.length > 0)
+            .map(linea => linea
+                .replace(/^[*\-•]+\s*/, '')
+                .replace(/^\d+[\.)]\s*/, '')
+                .replace(/^\d+\s+/, '')
+                .replace(/^[a-zA-Z]\)\s*/, '')
+                .trim()
+            )
+            .map(linea => corregirTextoVisual(linea))
+            .filter(linea => linea.length > 0);
+
+        if (pasosLimpios.length === 0) {
+            return '<div class="paso-item"><strong>1).</strong> No hay pasos definidos</div>';
+        }
+
+        return pasosLimpios
+            .map((paso, index) => `<div class="paso-item"><strong>${index + 1}).</strong> ${escaparHtml(paso)}</div>`)
+            .join('');
+    }
+
     function mostrarModal(index) {
         const fila = resultadosActuales[index];
         if (!fila) return;
         
-        const subArea = fila[2] || 'No especificada';
-        const tipoNovedad = fila[3] || 'Sin tipo';
-        const subtipo = fila[4] || 'Sin subtipo';
+        const subArea = corregirTextoVisual(fila[2] || 'No especificada');
+        const tipoNovedad = corregirTextoVisual(fila[3] || 'Sin tipo');
+        const subtipo = corregirTextoVisual(fila[4] || 'Sin subtipo');
         const pasos = fila[5] || 'No hay pasos definidos';
         
         document.getElementById('modalTipoNovedad').innerHTML = `📌 ${tipoNovedad}`;
         document.getElementById('modalSubtipo').innerHTML = `<strong>${subtipo}</strong>`;
-        document.getElementById('modalPasosTexto').innerHTML = pasos.replace(/\n/g, '<br>');
+        document.getElementById('modalPasosTexto').innerHTML = formatearPasos(pasos);
         document.getElementById('modalSubArea').innerHTML = `🔧 Sub Área: ${subArea}`;
         
         document.getElementById('modalPasos').classList.add('active');

@@ -173,74 +173,6 @@
             border-radius: 12px;
             border: 1px solid #e9ecef;
         }
-
-        .quick-entry {
-            margin-top: 22px;
-            border: 1px solid #dbe6f3;
-            border-radius: 14px;
-            padding: 16px;
-            background: #f7fbff;
-        }
-
-        .quick-entry h4 {
-            margin: 0 0 12px;
-            color: #0056b3;
-            font-size: 1.05em;
-        }
-
-        .quick-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(200px, 1fr));
-            gap: 10px;
-        }
-
-        .quick-grid input,
-        .quick-entry textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #cfe0f5;
-            border-radius: 10px;
-            font-family: inherit;
-            font-size: 14px;
-            outline: none;
-            background: white;
-        }
-
-        .quick-grid input:focus,
-        .quick-entry textarea:focus {
-            border-color: #0056b3;
-            box-shadow: 0 0 0 2px rgba(0,86,179,0.1);
-        }
-
-        .quick-entry textarea {
-            margin-top: 10px;
-            min-height: 120px;
-            resize: vertical;
-            line-height: 1.5;
-        }
-
-        .quick-entry-actions {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        #btn-guardar-pasos {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 24px;
-            background: linear-gradient(135deg, #0056b3, #00a6ff);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        #ingresoEstado {
-            color: #2c3e50;
-            font-size: 13px;
-        }
         
         table {
             width: 100%;
@@ -459,10 +391,6 @@
                 font-size: 12px;
                 padding: 4px 10px;
             }
-
-            .quick-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
@@ -494,22 +422,6 @@
         <div class="results-table-wrapper">
             <div id="resultados">
                 <div class="no-result">🔎 Escribe algo en el buscador para comenzar...</div>
-            </div>
-        </div>
-
-        <div class="quick-entry">
-            <h4>✍️ Ingreso rápido de pasos</h4>
-            <div class="quick-grid">
-                <input id="inputZona" type="text" placeholder="Zona (ej: MARCA)">
-                <input id="inputDireccion" type="text" placeholder="Dirección (ej: SEGURIDAD)">
-                <input id="inputSubArea" type="text" placeholder="Sub área (ej: SEGURIDAD)">
-                <input id="inputTipoNovedad" type="text" placeholder="Tipo de novedad (ej: HURTO)">
-                <input id="inputSubNovedad" type="text" placeholder="Sub novedad (ej: MECHERO)">
-            </div>
-            <textarea id="inputPasos" placeholder="Escribe aquí los pasos, uno por línea.\nEjemplo:\n1. Reportar a central\n2. Aislar la zona\n3. Activar apoyo"></textarea>
-            <div class="quick-entry-actions">
-                <button id="btn-guardar-pasos" type="button">Guardar / Actualizar pasos</button>
-                <span id="ingresoEstado">Completa los campos para agregar o actualizar.</span>
             </div>
         </div>
     </div>
@@ -723,13 +635,6 @@
 
     let resultadosActuales = [];
 
-    function normalizarClave(valor) {
-        return (valor || '')
-            .toString()
-            .trim()
-            .toUpperCase();
-    }
-
     function buscar() {
         const termino = document.getElementById('buscador').value.trim().toLowerCase();
         const resultadosDiv = document.getElementById('resultados');
@@ -889,44 +794,6 @@
         document.getElementById('modalPasos').classList.add('active');
     }
 
-    function guardarPasosRapido() {
-        const zona = document.getElementById('inputZona').value.trim();
-        const direccion = document.getElementById('inputDireccion').value.trim();
-        const subArea = document.getElementById('inputSubArea').value.trim();
-        const tipo = document.getElementById('inputTipoNovedad').value.trim();
-        const subNovedad = document.getElementById('inputSubNovedad').value.trim();
-        const pasosRaw = document.getElementById('inputPasos').value.trim();
-        const estado = document.getElementById('ingresoEstado');
-
-        if (!zona || !direccion || !subArea || !tipo || !subNovedad || !pasosRaw) {
-            estado.textContent = 'Faltan campos. Debes completar todos los datos y los pasos.';
-            return;
-        }
-
-        const pasosHtml = pasosRaw
-            .split(/\r?\n/)
-            .map(linea => linea.trim())
-            .filter(Boolean)
-            .join('<br>');
-
-        const indexExistente = datosExcel.findIndex(fila =>
-            normalizarClave(fila[0]) === normalizarClave(zona) &&
-            normalizarClave(fila[1]) === normalizarClave(direccion) &&
-            normalizarClave(fila[2]) === normalizarClave(subArea) &&
-            normalizarClave(fila[3]) === normalizarClave(tipo) &&
-            normalizarClave(fila[4]) === normalizarClave(subNovedad)
-        );
-
-        if (indexExistente >= 0) {
-            datosExcel[indexExistente][5] = pasosHtml;
-            estado.textContent = 'Registro encontrado: pasos actualizados correctamente.';
-        } else {
-            datosExcel.push([zona, direccion, subArea, tipo, subNovedad, pasosHtml]);
-            estado.textContent = 'Nuevo registro agregado correctamente.';
-        }
-
-        document.getElementById('inputPasos').value = '';
-    }
     
     function cerrarModal() {
         document.getElementById('modalPasos').classList.remove('active');
@@ -972,7 +839,6 @@
     }
     
     document.getElementById('btn-buscar').addEventListener('click', buscar);
-    document.getElementById('btn-guardar-pasos').addEventListener('click', guardarPasosRapido);
     document.getElementById('buscador').addEventListener('keyup', (e) => {
         if (e.key === 'Enter') buscar();
     });

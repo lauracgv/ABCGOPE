@@ -173,6 +173,74 @@
             border-radius: 12px;
             border: 1px solid #e9ecef;
         }
+
+        .quick-entry {
+            margin-top: 22px;
+            border: 1px solid #dbe6f3;
+            border-radius: 14px;
+            padding: 16px;
+            background: #f7fbff;
+        }
+
+        .quick-entry h4 {
+            margin: 0 0 12px;
+            color: #0056b3;
+            font-size: 1.05em;
+        }
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .quick-grid input,
+        .quick-entry textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cfe0f5;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+
+        .quick-grid input:focus,
+        .quick-entry textarea:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 0 2px rgba(0,86,179,0.1);
+        }
+
+        .quick-entry textarea {
+            margin-top: 10px;
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        .quick-entry-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        #btn-guardar-pasos {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #0056b3, #00a6ff);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #ingresoEstado {
+            color: #2c3e50;
+            font-size: 13px;
+        }
         
         table {
             width: 100%;
@@ -391,6 +459,10 @@
                 font-size: 12px;
                 padding: 4px 10px;
             }
+
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -422,6 +494,22 @@
         <div class="results-table-wrapper">
             <div id="resultados">
                 <div class="no-result">🔎 Escribe algo en el buscador para comenzar...</div>
+            </div>
+        </div>
+
+        <div class="quick-entry">
+            <h4>✍️ Ingreso rápido de pasos</h4>
+            <div class="quick-grid">
+                <input id="inputZona" type="text" placeholder="Zona (ej: MARCA)">
+                <input id="inputDireccion" type="text" placeholder="Dirección (ej: SEGURIDAD)">
+                <input id="inputSubArea" type="text" placeholder="Sub área (ej: SEGURIDAD)">
+                <input id="inputTipoNovedad" type="text" placeholder="Tipo de novedad (ej: HURTO)">
+                <input id="inputSubNovedad" type="text" placeholder="Sub novedad (ej: MECHERO)">
+            </div>
+            <textarea id="inputPasos" placeholder="Escribe aquí los pasos, uno por línea.\nEjemplo:\n1. Reportar a central\n2. Aislar la zona\n3. Activar apoyo"></textarea>
+            <div class="quick-entry-actions">
+                <button id="btn-guardar-pasos" type="button">Guardar / Actualizar pasos</button>
+                <span id="ingresoEstado">Completa los campos para agregar o actualizar.</span>
             </div>
         </div>
     </div>
@@ -505,6 +593,9 @@
         ["MARCA", "MANTENIMIENTO", "ELECTRICO", "CORTE DE ENERGIA POR EL OPERADOR DE RED", "MANTENIMIENTO PROGRAMADO POR EL OPERADOR", "*Regularmente la maniobra de apagado por matenimiento programado es previamente informado y organizado en su logistica para proceder por lo cual una vez se presuma iniciar con el mismo se brinda comunicado con los detalles de fechas, horas y zonas.<br>*Una vez se pretenda dar inicio a la maniobra programa el area de mantenimiento informara con una anticipacion a las marcas y zonas del centro comercial."],
         ["MARCA", "MANTENIMIENTO", "HIDRAULICO", "RUPTURA O FALLA EN TUBERIAS", "TUBERIAS DE AGUAS LLUVIAS, SANITARIAS", "* Identificar punto exacto de falla.<br>*Delimitar zona y retirar elecmentos sencibles.<br>*Acoplar la mayor cantidad de agua en buguis y dirigla a pozo eyector cuartos de bombas perú.<br>*Sacar listado materiales y programar arreglo lo antes posible."],
         ["MARCA", "MANTENIMIENTO", "HIDRAULICO", "RUPTURA O FALLA EN TUBERIAS", "RED DE AGUA POTABLE LOCALES", "* Identificar punto exacto de falla.<br>*Identificar zona afectada(plaza pisos)<br>*Cerrar valvula de control correspondiente para controlar fuga.<br>*Informar a las marcas correspondientes novedad presentada y dar un tiempo estimado.<br>*Sacar listado de materiales y generar arreglo lo antes posible."],
+        ["MARCA", "MANTENIMIENTO", "HIDRAULICO", "INCENDIO", "FUEGO INCIPIENTE", "1) Informar a todo mantenimiento para que el personal mas cercano a la marca se dirija de inmediato.<br>2) Tomar extintores mas cercanos y dirigirse a la marca.<br>3) Evacuar a todo el personal de la marca y que solo quede el personal capacitado para controlar el fuego incipiente.<br>4) Cerrar registro principal de gas desde medidores o valvula principal.<br>5) Accionar extintores segun la clase de fuego que corresponda.<br>6) Si el fuego es controlado evaluar danos y levantar informe.<br>7) Si el fuego se sale de control llamar inmediatamente a bomberos.<br>8) Evacuar marcas aledanas y cerrar suministros de gas cercanos."],
+        ["MARCA", "MANTENIMIENTO", "HIDRAULICO", "CORTE DE GAS POR COMERCIALIZADOR DE GAS", "CORTE DE AGUA POR NO PAGO DE SERVICIO", "1) Informar a mantenimiento.<br>2) Realizar registro de personal de VANTI en personal 1.<br>3) Enviar registro a central de locales con corte.<br>4) Con el apoyo de personal de securitas informar a las marcas de la visita de VANTI.<br>5) Si las marcas tienen comprobante de pago hacerlo llegar al sitio donde se encuentre VANTI lo antes posible para validacion.<br>6) En caso de corte ya sea porque la marca no pago, o no se encontraba nadie de la marca, informar al area de marcas para la respectiva retroalimentacion a las marcas afectadas."],
+        ["MARCA", "MANTENIMIENTO", "ELECTROMECANICO", "RUPTURA DE TOBERIAS DE AIRE ACONDICIONADO", "RUPTURA DE TUBERIA AGUAS ABAJO DE LA VALVULA PRINCIPAL DEL LOCAL", "1) Cerrar valvulas tanto de suministro como retorno dentro de la marca.<br>2) Si la valvula tiene paso intentar colocar tapon en red para subsanar la novedad.<br>3) Si no es posible colocar tapones identificar valvula de corte de piso y cerrar.<br>4) Avisar a marcas afectadas segun base de datos."],
         ["MARCA", "MANTENIMIENTO", "HIDRAULICO", "FUGA DE GAS", "FUGA DE GAS DENTRO DE LA MARCA", "*Cerrar todas las valvulas del local posible.<br>*Con los respectivos EPP y medidor de gas identificar punto de fuga.<br>*Despues de identificar punto evaluar si la fuga se puede contener con valvula principal de local, si no es asi proceder a cerrar inmediatamente registro del medidor principal.<br>*Informar a la marca y activar a VANTI segun corresponda."],
         ["MARCA", "MANTENIMIENTO", "HIDRAULICO", "FUGA DE GAS", "FUGA DE GAS EN NICHO DE MEDIDORES", "*Informar y activar de inmediato a VANTI.<br>*Con los respectivos EPP y medidor de gas identificar punto de fuga.<br>*Cerrar si se hace necesario el regular de la zona afectada.<br>*Avisar a las amrcas que puedan verse afectadas.<br>*Señalizar zona"],
         ["MARCA", "IIT", "AUTOMATIZACION", "ALARMA PRIORITARIA PANEL", "SENSOR TERMICO ACTIVADO", "1 Identificacion de la novedad por parte de la central de operaciones<br>2 la central de operaciones informar al anfitrion de la plaza para validar la novedad al interior de la marca<br>3 activar protocolo de emergencia en caso de incendio<br>4 Cerrar la novedad y normalizar el equipo/reiniciar el panel (Central de operaciones o coordiandor de automatizacion)<br>5 Si no puede normalizar el equipo reportar al contratista encargado para que pueda brindar solución (IFD)."],
@@ -631,6 +722,13 @@
     };
 
     let resultadosActuales = [];
+
+    function normalizarClave(valor) {
+        return (valor || '')
+            .toString()
+            .trim()
+            .toUpperCase();
+    }
 
     function buscar() {
         const termino = document.getElementById('buscador').value.trim().toLowerCase();
@@ -790,6 +888,45 @@
         
         document.getElementById('modalPasos').classList.add('active');
     }
+
+    function guardarPasosRapido() {
+        const zona = document.getElementById('inputZona').value.trim();
+        const direccion = document.getElementById('inputDireccion').value.trim();
+        const subArea = document.getElementById('inputSubArea').value.trim();
+        const tipo = document.getElementById('inputTipoNovedad').value.trim();
+        const subNovedad = document.getElementById('inputSubNovedad').value.trim();
+        const pasosRaw = document.getElementById('inputPasos').value.trim();
+        const estado = document.getElementById('ingresoEstado');
+
+        if (!zona || !direccion || !subArea || !tipo || !subNovedad || !pasosRaw) {
+            estado.textContent = 'Faltan campos. Debes completar todos los datos y los pasos.';
+            return;
+        }
+
+        const pasosHtml = pasosRaw
+            .split(/\r?\n/)
+            .map(linea => linea.trim())
+            .filter(Boolean)
+            .join('<br>');
+
+        const indexExistente = datosExcel.findIndex(fila =>
+            normalizarClave(fila[0]) === normalizarClave(zona) &&
+            normalizarClave(fila[1]) === normalizarClave(direccion) &&
+            normalizarClave(fila[2]) === normalizarClave(subArea) &&
+            normalizarClave(fila[3]) === normalizarClave(tipo) &&
+            normalizarClave(fila[4]) === normalizarClave(subNovedad)
+        );
+
+        if (indexExistente >= 0) {
+            datosExcel[indexExistente][5] = pasosHtml;
+            estado.textContent = 'Registro encontrado: pasos actualizados correctamente.';
+        } else {
+            datosExcel.push([zona, direccion, subArea, tipo, subNovedad, pasosHtml]);
+            estado.textContent = 'Nuevo registro agregado correctamente.';
+        }
+
+        document.getElementById('inputPasos').value = '';
+    }
     
     function cerrarModal() {
         document.getElementById('modalPasos').classList.remove('active');
@@ -835,6 +972,7 @@
     }
     
     document.getElementById('btn-buscar').addEventListener('click', buscar);
+    document.getElementById('btn-guardar-pasos').addEventListener('click', guardarPasosRapido);
     document.getElementById('buscador').addEventListener('keyup', (e) => {
         if (e.key === 'Enter') buscar();
     });

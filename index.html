@@ -507,6 +507,12 @@
         ["MARCA", "MANTENIMIENTO", "HIDRAULICO", "RUPTURA O FALLA EN TUBERIAS", "RED DE AGUA POTABLE LOCALES", "* Identificar punto exacto de falla.<br>*Identificar zona afectada(plaza pisos)<br>*Cerrar valvula de control correspondiente para controlar fuga.<br>*Informar a las marcas correspondientes novedad presentada y dar un tiempo estimado.<br>*Sacar listado de materiales y generar arreglo lo antes posible."],
         ["MARCA", "MANTENIMIENTO", "HIDRAULICO", "INCENDIO", "FUEGO INCIPIENTE", "1) Informar a todo mantenimiento para que el personal mas cercano a la marca se dirija de inmediato.<br>2) Tomar extintores mas cercanos y dirigirse a la marca.<br>3) Evacuar a todo el personal de la marca y que solo quede el personal capacitado para controlar el fuego incipiente.<br>4) Cerrar registro principal de gas desde medidores o valvula principal.<br>5) Accionar extintores segun la clase de fuego que corresponda.<br>6) Si el fuego es controlado evaluar danos y levantar informe.<br>7) Si el fuego se sale de control llamar inmediatamente a bomberos.<br>8) Evacuar marcas aledanas y cerrar suministros de gas cercanos."],
         ["MARCA", "MANTENIMIENTO", "HIDRAULICO", "CORTE DE GAS POR COMERCIALIZADOR DE GAS", "CORTE DE AGUA POR NO PAGO DE SERVICIO", "1) Informar a mantenimiento.<br>2) Realizar registro de personal de VANTI en personal 1.<br>3) Enviar registro a central de locales con corte.<br>4) Con el apoyo de personal de securitas informar a las marcas de la visita de VANTI.<br>5) Si las marcas tienen comprobante de pago hacerlo llegar al sitio donde se encuentre VANTI lo antes posible para validacion.<br>6) En caso de corte ya sea porque la marca no pago, o no se encontraba nadie de la marca, informar al area de marcas para la respectiva retroalimentacion a las marcas afectadas."],
+        ["MARCA", "MANTENIMIENTO", "CIVIL", "FILTRACIONES POR PLACA", "FILTRACION DE PLACA CON AFECTACION EN INFRAESTRUCTURA Y EQUIPOS", "1- VERIFICACION DE ZONA AFECTADA<br>2- IDENTIFICACION DE FILTRACION<br>3- CURADO Y SELLADO DE FILTRACION<br>4- REPARACION EN DAÑOS EVIDENCIADOS."],
+        ["MARCA", "MANTENIMIENTO", "CIVIL", "FILTRACIONES POR PLACA", "FILTRACION DE PLACA SIN AFECTACION DE INFRAESTRUCTURA Y EQUIPOS", "1- VERIFICACION DE ZONA AFECTADA<br>2- IDENTIFICACION DE FILTRACION<br>3- CURADO Y SELLADO DE FILTRACION"],
+        ["MARCA", "MANTENIMIENTO", "CIVIL", "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", "RIESGO DE CAIDA POR FALLAS ESTRUCTURALES", "1- INSPECCION DE AREA CON AFECTACION<br>2- SEÑALIZACION Y/O DEMARCACION DE AREA<br>3- VIABILIZAR POSIBLE INGRESO A ZONA BAJO PARAMETROS DE SEGURIDAD<br>4- VERIFICAR ALCANCE TECNICO VISUAL O CONSEGUIR ESPECIALISTA ESTRUCTURAL SI SE REQUIERE<br>5- MITIGAR Y CONTROLAR RIESGOS DEL MAS IMPORTANTE AL MENOS IMPORTANTE.<br>6- DIVULGAR CONFIRMACION DE APERTURA DE ZONA CON NOVEDAD CUANDO SE TENGA SEGURIDAD AL 100%"],
+        ["MARCA", "MANTENIMIENTO", "CIVIL", "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", "DESNIVELES SIN SEÑALIZACION", "1- IDENTIFICACION DE AREA<br>2- SEÑALIZACION Y AVISO AL DISPOSITIVO DE TURNO<br>3- ORGANIZAR Y EJECUTAR DEBIDA SEÑALIZACION PARA MITIGAR RIESGOS<br>4- LEVANTAR SEÑALIZACION DE TRABAJO, E INFORMAR QUE EL AREA CUENTA CON LA SEGURIDAD ADECUADA PARA SU TRANSITO"],
+        ["MARCA", "MANTENIMIENTO", "CIVIL", "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES", "RIESGO DE CAIDAS POR FALLAS NO ESTRUCTURALES", "1- INSPECCION DE AREA CON AFECTACION<br>2- SEÑALIZACION Y/O DEMARCACION DE AREA<br>3- VIABILIZAR POSIBLE INGRESO A ZONA BAJO PARAMETROS DE SEGURIDAD<br>4- CUANTIFICAR DAÑOS GENERADOS<br>5- MITIGAR Y CONTROLAR RIESGOS DEL MAS IMPORTANTE AL MENOS IMPORTANTE.<br>6- DIVULGAR CONFIRMACION DE APERTURA DE ZONA CON NOVEDAD CUANDO SE TENGA SEGURIDAD AL 100%"],
+        ["MARCA", "MANTENIMIENTO", "CIVIL", "FALLA EN REJAS Y PUERTAS DE INGRESO A LA MARCA", "CERRADURAS DEFECTUOSAS", "1- INSPECCION DE DAÑO<br>2- VALIDAR OPCIONES DE AJUSTE Y/O ARREGLO<br>3- CAMBIO POR NUEVA DE SER NECESARIO"],
         ["MARCA", "MANTENIMIENTO", "ELECTROMECANICO", "RUPTURA DE TOBERIAS DE AIRE ACONDICIONADO", "RUPTURA DE TUBERIA AGUAS ABAJO DE LA VALVULA PRINCIPAL DEL LOCAL", "1) Cerrar valvulas tanto de suministro como retorno dentro de la marca.<br>2) Si la valvula tiene paso intentar colocar tapon en red para subsanar la novedad.<br>3) Si no es posible colocar tapones identificar valvula de corte de piso y cerrar.<br>4) Avisar a marcas afectadas segun base de datos."],
         ["MARCA", "MANTENIMIENTO", "HIDRAULICO", "FUGA DE GAS", "FUGA DE GAS DENTRO DE LA MARCA", "*Cerrar todas las valvulas del local posible.<br>*Con los respectivos EPP y medidor de gas identificar punto de fuga.<br>*Despues de identificar punto evaluar si la fuga se puede contener con valvula principal de local, si no es asi proceder a cerrar inmediatamente registro del medidor principal.<br>*Informar a la marca y activar a VANTI segun corresponda."],
         ["MARCA", "MANTENIMIENTO", "HIDRAULICO", "FUGA DE GAS", "FUGA DE GAS EN NICHO DE MEDIDORES", "*Informar y activar de inmediato a VANTI.<br>*Con los respectivos EPP y medidor de gas identificar punto de fuga.<br>*Cerrar si se hace necesario el regular de la zona afectada.<br>*Avisar a las amrcas que puedan verse afectadas.<br>*Señalizar zona"],
@@ -607,6 +613,16 @@
         // HIDRAULICO / GAS
         "tuberia": "RUPTURA O FALLA EN TUBERIAS", "inundacion": "RUPTURA O FALLA EN TUBERIAS", "fuga agua": "RUPTURA O FALLA EN TUBERIAS",
         "gas": "FUGA DE GAS", "fuga gas": "FUGA DE GAS", "olor gas": "FUGA DE GAS",
+        "corte gas": "CORTE DE GAS POR COMERCIALIZADOR DE GAS", "vanti": "CORTE DE GAS POR COMERCIALIZADOR DE GAS",
+        "suspension gas": "CORTE DE GAS POR COMERCIALIZADOR DE GAS", "comercializador gas": "CORTE DE GAS POR COMERCIALIZADOR DE GAS",
+        // CIVIL
+        "filtracion": "FILTRACIONES POR PLACA", "goteras": "FILTRACIONES POR PLACA", "humedad": "FILTRACIONES POR PLACA",
+        "placa": "FILTRACIONES POR PLACA", "falla estructural": "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES",
+        "falla no estructural": "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES",
+        "riesgo caida": "RIESGO DE CAIDAS DE ELEMENTOS Y/O FALLAS ESTRUCTURALES Y NO ESTRUCTURALES",
+        "desnivel": "DESNIVELES SIN SEÑALIZACION", "sin señalizacion": "DESNIVELES SIN SEÑALIZACION",
+        "cerradura": "CERRADURAS DEFECTUOSAS", "chapa": "CERRADURAS DEFECTUOSAS",
+        "reja": "FALLA EN REJAS Y PUERTAS DE INGRESO A LA MARCA", "puerta dañada": "FALLA EN REJAS Y PUERTAS DE INGRESO A LA MARCA",
         // ILUMINACION
         "luces": "FALLA EN ILUMINACION MALL", "iluminacion": "FALLA EN ILUMINACION MALL",
         "luces sotano": "FALLA EN ILUMINACION DE SOTANOS",
@@ -741,6 +757,30 @@
         return salida;
     }
 
+    function normalizarFormatoPaso(texto) {
+        if (!texto) return texto;
+
+        const acronimos = [
+            'CC', 'CCTV', 'VANTI', 'UPS', 'IIT', 'IFD', 'ADCI', 'ESET',
+            'ACPM', 'PONAL', 'EPP', 'HSEQ', 'HSSQ', 'QR', 'DIAN', 'SAS'
+        ];
+
+        let salida = texto.toLowerCase();
+
+        // Capitaliza inicio de texto y de cada frase.
+        salida = salida.replace(/(^|[.!?]\s+)([a-záéíóúñ])/g, (match, prefijo, letra) => {
+            return `${prefijo}${letra.toUpperCase()}`;
+        });
+
+        // Restaura acronimos comunes para mantener legibilidad operativa.
+        acronimos.forEach(acronimo => {
+            const regex = new RegExp(`\\b${acronimo.toLowerCase()}\\b`, 'g');
+            salida = salida.replace(regex, acronimo);
+        });
+
+        return salida;
+    }
+
     function formatearPasos(pasosTexto) {
         if (!pasosTexto || pasosTexto.trim() === '') {
             return '<div class="paso-item"><strong>1).</strong> No hay pasos definidos</div>';
@@ -765,6 +805,7 @@
                 .replace(/^[a-zA-Z]\)\s*/, '')
                 .trim()
             )
+            .map(linea => normalizarFormatoPaso(linea))
             .map(linea => corregirTextoVisual(linea))
             .filter(linea => linea.length > 0);
 

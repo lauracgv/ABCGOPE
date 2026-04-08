@@ -800,7 +800,7 @@
             .filter(linea => linea.length > 0)
             .map(linea => linea
                 .replace(/^[*\-•]+\s*/, '')
-                .replace(/^\d+[\.)]\s*/, '')
+                .replace(/^\d+\s*[-\.)]+\s*/, '')
                 .replace(/^\d+\s+/, '')
                 .replace(/^[a-zA-Z]\)\s*/, '')
                 .trim()

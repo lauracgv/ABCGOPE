@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Buscador de Novedades - Centro Comercial</title>
+    <title>Novedades en la operacion - Centro Comercial</title>
     <style>
         * {
             box-sizing: border-box;
@@ -28,17 +28,17 @@
             position: relative;
         }
 
-        .container::before {
-            content: '';
-            position: absolute;
-            inset: auto -40px -30px auto;
-            width: 220px;
-            height: 220px;
-            background: url('logo.png') center/contain no-repeat;
-            opacity: 0.05;
-            pointer-events: none;
-            transform: rotate(-8deg);
-        }
+            .container::before {
+                content: '';
+                position: absolute;
+                inset: auto -40px -30px auto;
+                width: 220px;
+                height: 220px;
+                background: url('logo.png') center/contain no-repeat;
+                opacity: 0.05;
+                pointer-events: none;
+                transform: rotate(-8deg);
+            }
         
         .header {
             background: linear-gradient(135deg, #0056b3 0%, #00a6ff 100%);
@@ -103,11 +103,6 @@
             letter-spacing: 0.08em;
         }
 
-        .header-brand-text span {
-            display: block;
-            font-size: 0.78em;
-            opacity: 0.92;
-        }
         
         .header h1 {
             margin: 0;
@@ -135,42 +130,6 @@
         .search-box {
             flex: 2;
             min-width: 250px;
-        }
-        
-        .image-container {
-            flex: 1;
-            min-width: 180px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        
-        .draggable-image {
-            width: 100%;
-            max-width: 200px;
-            cursor: grab;
-            position: relative;
-        }
-        
-        .draggable-image:active {
-            cursor: grabbing;
-        }
-        
-        .draggable-image.is-hidden {
-            opacity: 0;
-        }
-        
-        .drag-hint {
-            margin-top: 10px;
-            font-size: 11px;
-            color: #888;
-            background: rgba(255,255,255,0.9);
-            padding: 2px 10px;
-            border-radius: 20px;
-            white-space: nowrap;
-            pointer-events: none;
         }
         
         .search-input-group {
@@ -233,14 +192,28 @@
             max-height: 550px;
             overflow-y: auto;
             border-radius: 12px;
-            border: 1px solid #e9ecef;
+                border: 0;
+                outline: 0;
+                box-shadow: none;
         }
         
         table {
             width: 100%;
-            border-collapse: collapse;
+                border-collapse: separate;
+                border-spacing: 0;
             font-size: 14px;
+                border: 0;
         }
+
+            thead,
+            tbody,
+            tr,
+            th,
+            td {
+                border: 0;
+                outline: 0;
+                box-shadow: none;
+            }
         
         th {
             background: #f8f9fa;
@@ -248,7 +221,6 @@
             text-align: left;
             font-weight: 600;
             color: #2c3e50;
-            border-bottom: 2px solid #dee2e6;
             position: sticky;
             top: 0;
             background: #f8f9fa;
@@ -257,7 +229,6 @@
         
         td {
             padding: 14px 12px;
-            border-bottom: 1px solid #e9ecef;
             vertical-align: middle;
             cursor: pointer;
             transition: background 0.2s;
@@ -279,6 +250,7 @@
             font-weight: 600;
             font-size: 13px;
             display: inline-block;
+            text-decoration: none;
         }
         
         .subarea-text {
@@ -287,10 +259,12 @@
         }
         
         .highlight {
-            background-color: #ffc107;
-            font-weight: 500;
-            padding: 2px 4px;
-            border-radius: 4px;
+              background: transparent;
+              color: inherit;
+              font-weight: inherit;
+              padding: 0;
+              border-radius: 0;
+              text-decoration: none;
         }
         
         .no-result {
@@ -439,12 +413,6 @@
             .search-section {
                 flex-direction: column;
             }
-            .image-container {
-                order: -1;
-            }
-            .draggable-image {
-                max-width: 140px;
-            }
             th, td {
                 font-size: 13px;
                 padding: 10px 8px;
@@ -472,7 +440,7 @@
                 width: 150px;
                 height: 150px;
                 right: -25px;
-                bottom: -20px; 
+                bottom: -20px;
             }
         }
     </style>
@@ -488,8 +456,8 @@
                 <strong>CENTRO COMERCIAL SANTAFE</strong>
             </div>
         </div>
-        <h1>🔍 Buscador de Novedades</h1>
-        <p>Encuentra los pasos a seguir ante una novedad • Haz clic en cualquier resultado para ver los pasos detallados</p>
+        <h1>🔍 Novedades en la operacion</h1>
+        <p>Items a tener en cuenta ante una novedad • Haz clic en cualquier resultado para ver los pasos detallados</p>
     </div>
     
     <div class="content">
@@ -504,15 +472,11 @@
                     <span class="sinonimos-nota">✨ Sinónimos: 'robo' → 'hurto', 'pelea' → 'riña', 'fuego' → 'incendio'</span>
                 </div>
             </div>
-            <div class="image-container">
-                <img id="equipoImage" class="draggable-image" src="https://cdn-icons-png.flaticon.com/512/4324/4324433.png" alt="Equipo de seguridad">
-                <div class="drag-hint">🖱️ Haz clic y arrastra para moverme</div>
-            </div>
         </div>
         
         <div class="results-table-wrapper">
             <div id="resultados">
-                <div class="no-result">🔎 Escribe algo en el buscador para comenzar...</div>
+                <div class="no-result">🔎 Primero que todo, se debe asegurar la comunicación con la central de operaciones.  </div>
             </div>
         </div>
     </div>
@@ -763,6 +727,93 @@
 
     let resultadosActuales = [];
 
+    function ordenarSubnovedadesPorBusqueda(subNovedades, terminosBusqueda) {
+        const terminos = Array.from(terminosBusqueda || []).map(termino => termino.toLowerCase());
+
+        return [...subNovedades].sort((subNovedadA, subNovedadB) => {
+            const textoA = (subNovedadA || '').toLowerCase();
+            const textoB = (subNovedadB || '').toLowerCase();
+            const coincideA = terminos.some(termino => termino && textoA.includes(termino));
+            const coincideB = terminos.some(termino => termino && textoB.includes(termino));
+
+            if (coincideA !== coincideB) {
+                return coincideA ? -1 : 1;
+            }
+
+            return textoA.localeCompare(textoB, 'es');
+        });
+    }
+
+    function agruparResultados(resultados, terminosBusqueda) {
+        const grupos = new Map();
+
+        resultados.forEach(fila => {
+            const claveGrupo = `${fila[2] || ''}|||${fila[3] || ''}|||${fila[5] || ''}`;
+
+            if (!grupos.has(claveGrupo)) {
+                grupos.set(claveGrupo, {
+                    subArea: fila[2] || 'No especificada',
+                    tipoNovedad: fila[3] || 'Sin tipo',
+                    pasos: fila[5] || 'No hay pasos definidos',
+                    subNovedades: new Set()
+                });
+            }
+
+            grupos.get(claveGrupo).subNovedades.add(fila[4] || 'Sin subtipo');
+        });
+
+        return Array.from(grupos.values()).map(grupo => {
+            const subNovedades = ordenarSubnovedadesPorBusqueda(grupo.subNovedades, terminosBusqueda);
+
+            return {
+                ...grupo,
+                subNovedades,
+                subtipoVisible: subNovedades.join(' / ')
+            };
+        });
+    }
+
+    function puntuarResultado(resultado, terminosBusqueda) {
+        const terminos = Array.from(terminosBusqueda || []).map(termino => termino.toLowerCase());
+        const subtipo = (resultado.subtipoVisible || '').toLowerCase();
+        const tipo = (resultado.tipoNovedad || '').toLowerCase();
+        const subArea = (resultado.subArea || '').toLowerCase();
+        let puntaje = 0;
+
+        terminos.forEach(termino => {
+            if (!termino) return;
+
+            if (subtipo === termino) puntaje += 120;
+            else if (subtipo.includes(termino)) puntaje += 60;
+
+            if (tipo === termino) puntaje += 40;
+            else if (tipo.includes(termino)) puntaje += 20;
+
+            if (subArea.includes(termino)) puntaje += 10;
+        });
+
+        puntaje -= resultado.subNovedades.length;
+        return puntaje;
+    }
+
+    function seleccionarMejorResultado(resultados, terminosBusqueda) {
+        if (resultados.length <= 1) {
+            return resultados;
+        }
+
+        const resultadosOrdenados = [...resultados].sort((resultadoA, resultadoB) => {
+            const diferenciaPuntaje = puntuarResultado(resultadoB, terminosBusqueda) - puntuarResultado(resultadoA, terminosBusqueda);
+
+            if (diferenciaPuntaje !== 0) {
+                return diferenciaPuntaje;
+            }
+
+            return (resultadoA.subtipoVisible || '').localeCompare(resultadoB.subtipoVisible || '', 'es');
+        });
+
+        return [resultadosOrdenados[0]];
+    }
+
     function buscar() {
         const termino = document.getElementById('buscador').value.trim().toLowerCase();
         const resultadosDiv = document.getElementById('resultados');
@@ -789,15 +840,18 @@
             return false;
         });
 
-        resultadosActuales = resultados;
+        resultadosActuales = seleccionarMejorResultado(
+            agruparResultados(resultados, terminosBusqueda),
+            terminosBusqueda
+        );
 
-        if (resultados.length === 0) {
+        if (resultadosActuales.length === 0) {
             resultadosDiv.innerHTML = `<div class="no-result">😕 No se encontraron resultados para "${termino}".<br>Prueba con: robo, incendio, pelea, caida, policia, fuga, etc.</div>`;
             countSpan.innerHTML = `📋 Mostrando <strong>0</strong> resultados`;
         } else {
             let html = ` <table> <thead> <tr> <th>Sub Área</th> <th>Sub Novedad</th> </tr> </thead> <tbody>`;
-            resultados.forEach((fila, idx) => {
-                let subNovedadResaltada = corregirTextoVisual(fila[4] || '-');
+            resultadosActuales.forEach((fila, idx) => {
+                let subNovedadResaltada = corregirTextoVisual(fila.subtipoVisible || '-');
                 terminosBusqueda.forEach(term => {
                     if (term.length > 2) {
                         const regex = new RegExp(`(${term})`, 'gi');
@@ -805,13 +859,13 @@
                     }
                 });
                 html += `<tr class="clickable-row" data-index="${idx}">
-                            <td class="subarea-text">${corregirTextoVisual(fila[2] || '-')}</td>
+                            <td class="subarea-text">${corregirTextoVisual(fila.subArea || '-')}</td>
                             <td><span class="tipo-novedad-badge">${subNovedadResaltada}</span></td>
                           </tr>`;
             });
             html += `</tbody> </table>`;
             resultadosDiv.innerHTML = html;
-            countSpan.innerHTML = `📋 Mostrando <strong>${resultados.length}</strong> resultado${resultados.length !== 1 ? 's' : ''}`;
+            countSpan.innerHTML = `📋 Mostrando <strong>${resultadosActuales.length}</strong> resultado${resultadosActuales.length !== 1 ? 's' : ''}`;
             
             document.querySelectorAll('.clickable-row').forEach(row => {
                 row.addEventListener('click', (e) => {
@@ -934,10 +988,10 @@
         const fila = resultadosActuales[index];
         if (!fila) return;
         
-        const subArea = corregirTextoVisual(fila[2] || 'No especificada');
-        const tipoNovedad = corregirTextoVisual(fila[3] || 'Sin tipo');
-        const subtipo = corregirTextoVisual(fila[4] || 'Sin subtipo');
-        const pasos = fila[5] || 'No hay pasos definidos';
+        const subArea = corregirTextoVisual(fila.subArea || 'No especificada');
+        const tipoNovedad = corregirTextoVisual(fila.tipoNovedad || 'Sin tipo');
+        const subtipo = corregirTextoVisual(fila.subtipoVisible || 'Sin subtipo');
+        const pasos = fila.pasos || 'No hay pasos definidos';
         
         document.getElementById('modalTipoNovedad').innerHTML = `📌 ${tipoNovedad}`;
         document.getElementById('modalSubtipo').innerHTML = `<strong>${subtipo}</strong>`;
@@ -952,85 +1006,6 @@
         document.getElementById('modalPasos').classList.remove('active');
     }
 
-    function initDraggable() {
-        const img = document.getElementById('equipoImage');
-        let isDragging = false;
-        let dragOffsetX = 0;
-        let dragOffsetY = 0;
-        let originRect = null;
-        let ghostImg = null;
-
-        function limpiarArrastre() {
-            img.classList.remove('is-hidden');
-
-            if (ghostImg) {
-                ghostImg.remove();
-                ghostImg = null;
-            }
-        }
-        
-        img.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            if (ghostImg) return;
-
-            originRect = img.getBoundingClientRect();
-            dragOffsetX = e.clientX - originRect.left;
-            dragOffsetY = e.clientY - originRect.top;
-            isDragging = true;
-
-            ghostImg = img.cloneNode(true);
-            ghostImg.removeAttribute('id');
-            ghostImg.style.position = 'fixed';
-            ghostImg.style.left = `${originRect.left}px`;
-            ghostImg.style.top = `${originRect.top}px`;
-            ghostImg.style.width = `${originRect.width}px`;
-            ghostImg.style.height = `${originRect.height}px`;
-            ghostImg.style.maxWidth = `${originRect.width}px`;
-            ghostImg.style.margin = '0';
-            ghostImg.style.cursor = 'grabbing';
-            ghostImg.style.pointerEvents = 'none';
-            ghostImg.style.zIndex = '2000';
-            ghostImg.style.opacity = '0.9';
-            ghostImg.style.transition = 'none';
-
-            document.body.appendChild(ghostImg);
-            img.classList.add('is-hidden');
-        });
-        
-        window.addEventListener('mousemove', (e) => {
-            if (!isDragging || !ghostImg) return;
-            ghostImg.style.left = `${e.clientX - dragOffsetX}px`;
-            ghostImg.style.top = `${e.clientY - dragOffsetY}px`;
-        });
-        
-        window.addEventListener('mouseup', () => {
-            if (!isDragging || !ghostImg) return;
-
-            isDragging = false;
-            const targetRect = img.getBoundingClientRect();
-
-            ghostImg.style.cursor = 'grab';
-            ghostImg.style.transition = 'left 0.35s ease, top 0.35s ease';
-            ghostImg.style.left = `${targetRect.left}px`;
-            ghostImg.style.top = `${targetRect.top}px`;
-
-            const onTransitionEnd = (event) => {
-                if (event.propertyName !== 'left') return;
-                ghostImg.removeEventListener('transitionend', onTransitionEnd);
-                limpiarArrastre();
-            };
-
-            ghostImg.addEventListener('transitionend', onTransitionEnd);
-        });
-        
-        img.addEventListener('dragstart', (e) => e.preventDefault());
-        window.addEventListener('resize', () => {
-            if (!isDragging) return;
-            limpiarArrastre();
-            isDragging = false;
-        });
-    }
-    
     document.getElementById('btn-buscar').addEventListener('click', buscar);
     document.getElementById('buscador').addEventListener('keyup', (e) => {
         if (e.key === 'Enter') buscar();
@@ -1041,10 +1016,9 @@
     document.getElementById('modalPasos').addEventListener('click', (e) => {
         if (e.target === document.getElementById('modalPasos')) cerrarModal();
     });
-    
-    initDraggable();
+
     window.onload = () => {
-        document.getElementById('resultados').innerHTML = '<div class="no-result">🔎 Escribe algo en el buscador y presiona Buscar...</div>';
+        document.getElementById('resultados').innerHTML = '<div class="no-result">🔎 Primero que todo, se debe asegurar la comunicación con la central de operaciones.</div>';
     };
 })();
 </script>
